@@ -5,7 +5,7 @@ import json
 import os
 from datetime import UTC, datetime
 
-from bbagent_paths import repo_path
+from beta_ops_paths import repo_path
 
 
 FINDINGS_ROOT = repo_path("findings")
@@ -176,7 +176,7 @@ def evaluate_target(target: str) -> dict:
         result["decision"] = "PASS"
         result["confidence"] = "HIGH"
         result["reason"] = "At least one evidence pack is validation-ready"
-        result["next_action"] = "Run /gate or bbagent_validate.py on the strongest pack"
+        result["next_action"] = "Run /gate or beta_ops_validate.py on the strongest pack"
     elif result["verdict_totals"]["CHAIN REQUIRED"]:
         result["decision"] = "CHAIN REQUIRED"
         result["confidence"] = "MEDIUM"

@@ -5,25 +5,29 @@ Systematically tests every GraphQL query/mutation with Account B's token
 against Account A's resource IDs. Flags any response where B gets A's data.
 
 Usage:
-  python3 bbagent_idor_scan.py --token-a TOKEN_A --token-b TOKEN_B --report-id REPORT_ID
-  python3 bbagent_idor_scan.py --token-a TOKEN_A --token-b TOKEN_B --report-id REPORT_ID --user-id USER_ID --program HANDLE
+  python3 beta_ops_idor_scan.py --token-a TOKEN_A --token-b TOKEN_B --report-id REPORT_ID
+  python3 beta_ops_idor_scan.py --token-a TOKEN_A --token-b TOKEN_B --report-id REPORT_ID --user-id USER_ID --program HANDLE
 """
 
 import argparse
 import base64
 import json
-import time
+import re
 import sys
-from typing import Optional
-import urllib.request
+import time
 import urllib.error
+import urllib.request
+from typing import Optional
 
 # ─── Config ───────────────────────────────────────────────────────────────────
 GRAPHQL_URL = "https://hackerone.com/graphql"
-REST_BASE    = "https://hackerone.com"
-API_BASE     = "https://api.hackerone.com"
-SLEEP        = 0.4   # between requests — avoid Cloudflare 1015
-FINDINGS     = []    # collected findings
+REST_BASE = "https://hackerone.com"
+API_BASE = "https://api.hackerone.com"
+SLEEP = 0.4  # between requests — avoid Cloudflare 1015
+FINDINGS = []  # collected findings
+REPORT_ID_RE = re.compile(r"^\d+$")
+USER_ID_RE = re.compile(r"^\d+$")
+PROGRAM_HANDLE_RE = re.compile(r"^[A-Za-z0-9_-]+$")
 
 # ─── HTTP Helpers ─────────────────────────────────────────────────────────────
 
@@ -73,6 +77,24 @@ def rest(token: str, path: str) -> tuple[int, dict | str]:
 
 def make_gid(typename: str, id_: int | str) -> str:
     return base64.b64encode(f"gid://hackerone/{typename}/{id_}".encode()).decode()
+
+
+def validate_report_id(report_id: str) -> str:
+    if not REPORT_ID_RE.fullmatch(report_id):
+        raise SystemExit("report-id must be numeric")
+    return report_id
+
+
+def validate_user_id(user_id: str) -> str:
+    if not USER_ID_RE.fullmatch(user_id):
+        raise SystemExit("user-id must be numeric")
+    return user_id
+
+
+def validate_program_handle(program_handle: str) -> str:
+    if not PROGRAM_HANDLE_RE.fullmatch(program_handle):
+        raise SystemExit("program handle contains unsupported characters")
+    return program_handle
 
 
 # ─── Comparison Logic ─────────────────────────────────────────────────────────
@@ -548,34 +570,38 @@ def main():
             return n in only
         return n not in skip
 
-    print("HackerOne IDOR Scanner")
-    print(f"Token A: {args.token_a[:8]}...")
-    print(f"Token B: {args.token_b[:8]}...")
-    print(f"Report ID: {args.report_id}")
-    print(f"User ID: {args.user_id}")
-    print(f"Program: {args.program}")
-    print(f"Sleep between requests: {SLEEP}s\n")
-
     if not args.report_id and not args.user_id and not args.program:
         print("ERROR: Provide at least one of --report-id, --user-id, or --program")
         sys.exit(1)
 
-    if args.report_id:
-        if should_run("1"): test_report_idor(args.token_a, args.token_b, args.report_id)
-        if should_run("2"): test_report_node_idor(args.token_a, args.token_b, args.report_id)
-        if should_run("3"): test_rest_report_idor(args.token_a, args.token_b, args.report_id)
-        if should_run("8"): test_collaboration_idor(args.token_a, args.token_b, args.report_id)
-        if should_run("9"): test_hai_idor(args.token_a, args.token_b, args.report_id)
-        if args.program and should_run("10"):
-            test_manager_mutations(args.token_a, args.token_b, args.report_id, args.program)
+    report_id = validate_report_id(args.report_id) if args.report_id else None
+    user_id = validate_user_id(args.user_id) if args.user_id else None
+    program = validate_program_handle(args.program) if args.program else None
 
-    if args.program:
-        if should_run("4"): test_duplicate_detector_idor(args.token_a, args.token_b, args.program)
-        if should_run("5"): test_program_idor(args.token_a, args.token_b, args.program)
+    print("HackerOne IDOR Scanner")
+    print(f"Token A: {'provided' if args.token_a else 'missing'}")
+    print(f"Token B: {'provided' if args.token_b else 'missing'}")
+    print(f"Report ID: {report_id}")
+    print(f"User ID: {user_id}")
+    print(f"Program: {program}")
+    print(f"Sleep between requests: {SLEEP}s\n")
 
-    if args.user_id:
-        if should_run("6"): test_user_idor(args.token_a, args.token_b, args.user_id)
-        if should_run("7"): test_identity_idor(args.token_a, args.token_b, args.user_id)
+    if report_id:
+        if should_run("1"): test_report_idor(args.token_a, args.token_b, report_id)
+        if should_run("2"): test_report_node_idor(args.token_a, args.token_b, report_id)
+        if should_run("3"): test_rest_report_idor(args.token_a, args.token_b, report_id)
+        if should_run("8"): test_collaboration_idor(args.token_a, args.token_b, report_id)
+        if should_run("9"): test_hai_idor(args.token_a, args.token_b, report_id)
+        if program and should_run("10"):
+            test_manager_mutations(args.token_a, args.token_b, report_id, program)
+
+    if program:
+        if should_run("4"): test_duplicate_detector_idor(args.token_a, args.token_b, program)
+        if should_run("5"): test_program_idor(args.token_a, args.token_b, program)
+
+    if user_id:
+        if should_run("6"): test_user_idor(args.token_a, args.token_b, user_id)
+        if should_run("7"): test_identity_idor(args.token_a, args.token_b, user_id)
 
     if should_run("11"): test_graphql_csrf(args.token_a)
     if should_run("12"): test_2fa_rate_limit(args.token_b)

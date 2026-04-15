@@ -1,6 +1,6 @@
 # Claude Setup
 
-Use BBAgent in Claude by installing the tracks and playbooks, then using the Claude-facing guide in this repository.
+Use beta-ops in Claude by installing the tracks and playbooks, then using the Claude-facing guide in this repository.
 
 ## Files
 
@@ -70,7 +70,7 @@ Use narrower playbooks or tracks only when the task is clearly scoped:
 - `/brief` for write-up
 - [contract-review](../../tracks/contract-review/SKILL.md) for smart contracts
 
-For autonomous runs, generate scope JSON first with `python3 bbagent_scope.py --csv hackerone-scope.csv` or another supported source, then feed that file into `python3 bbagent_autonomous.py`.
+For autonomous runs, generate scope JSON first with `python3 beta_ops_scope.py --csv hackerone-scope.csv` or another supported source, then feed that file into `python3 beta_ops_autonomous.py`.
 
 ## Verification
 
@@ -81,4 +81,4 @@ ls ~/.claude/skills
 ls ~/.claude/commands
 ```
 
-You should see the BBAgent tracks and playbooks after installation.
+You should see the beta-ops tracks and playbooks after installation.

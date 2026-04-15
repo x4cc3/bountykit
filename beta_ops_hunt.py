@@ -4,27 +4,27 @@ Bug Bounty Hunt Orchestrator
 Main script that chains target selection, recon, scanning, and reporting.
 
 Usage:
-    python3 bbagent_hunt.py                         # Full pipeline: select targets + hunt
-    python3 bbagent_hunt.py --target <domain>       # Hunt a specific target
-    python3 bbagent_hunt.py --quick --target <domain>  # Quick scan mode
-    python3 bbagent_hunt.py --recon-only --target <domain>  # Only run recon
-    python3 bbagent_hunt.py --scan-only --target <domain>   # Only run vuln scanner (requires prior recon)
-    python3 bbagent_hunt.py --status                # Show current progress
-    python3 bbagent_hunt.py --setup-wordlists       # Download common wordlists
-    python3 bbagent_hunt.py --cve-hunt --target <domain>   # Run CVE hunter
-    python3 bbagent_hunt.py --zero-day --target <domain>   # Run zero-day fuzzer
+    python3 beta_ops_hunt.py                         # Full pipeline: select targets + hunt
+    python3 beta_ops_hunt.py --target <domain>       # Hunt a specific target
+    python3 beta_ops_hunt.py --quick --target <domain>  # Quick scan mode
+    python3 beta_ops_hunt.py --recon-only --target <domain>  # Only run recon
+    python3 beta_ops_hunt.py --scan-only --target <domain>   # Only run vuln scanner (requires prior recon)
+    python3 beta_ops_hunt.py --status                # Show current progress
+    python3 beta_ops_hunt.py --setup-wordlists       # Download common wordlists
+    python3 beta_ops_hunt.py --cve-hunt --target <domain>   # Run CVE hunter
+    python3 beta_ops_hunt.py --zero-day --target <domain>   # Run zero-day fuzzer
 """
 
 import argparse
 import json
 import os
 import re
-import shlex
+import shutil
 import subprocess
 import sys
 from datetime import datetime
 
-from bbagent_paths import repo_path
+from beta_ops_paths import repo_path
 
 BASE_DIR = repo_path()
 TOOLS_DIR = BASE_DIR
@@ -50,11 +50,16 @@ def log(level, msg):
     print(f"{colors.get(level, '')}{BOLD}[{symbols.get(level, '*')}]{NC} {msg}")
 
 
-def run_cmd(cmd, cwd=None, timeout=600):
-    """Run a shell command and return (success, output)."""
+def run_cmd(cmd: list[str], cwd=None, timeout=600, input_text=None):
+    """Run a command and return (success, output)."""
     try:
         result = subprocess.run(
-            cmd, shell=True, capture_output=True, text=True, cwd=cwd, timeout=timeout
+            cmd,
+            capture_output=True,
+            text=True,
+            cwd=cwd,
+            timeout=timeout,
+            input=input_text,
         )
         return result.returncode == 0, result.stdout + result.stderr
     except subprocess.TimeoutExpired:
@@ -86,8 +91,7 @@ def check_tools():
     missing = []
 
     for tool in tools:
-        success, _ = run_cmd(f"command -v {tool}")
-        if success:
+        if shutil.which(tool):
             installed.append(tool)
         else:
             missing.append(tool)
@@ -113,7 +117,7 @@ def setup_wordlists():
             continue
 
         log("info", f"Downloading {name}...")
-        success, output = run_cmd(f'curl -sL "{url}" -o "{filepath}"')
+        success, output = run_cmd(["curl", "-sL", url, "-o", filepath])
         if success and os.path.getsize(filepath) > 100:
             lines = sum(1 for _ in open(filepath))
             log("ok", f"Downloaded {name} ({lines} entries)")
@@ -127,7 +131,7 @@ def select_targets(top_n=10):
     """Run target selector."""
     log("info", "Running target selector...")
     script = os.path.join(TOOLS_DIR, "target_selector.py")
-    success, output = run_cmd(f'python3 "{script}" --top {top_n}', timeout=60)
+    success, output = run_cmd(["python3", script, "--top", str(top_n)], timeout=60)
     print(output)
 
     if not success:
@@ -148,17 +152,15 @@ def run_recon(domain, quick=False):
     """Run recon engine on a domain."""
     domain = validate_target(domain)
     log("info", f"Running recon on {domain}...")
-    script = os.path.join(TOOLS_DIR, "bbagent_recon.sh")
-    quick_flag = "--quick" if quick else ""
+    script = os.path.join(TOOLS_DIR, "beta_ops_recon.sh")
+    cmd = ["bash", script, domain]
+    if quick:
+        cmd.append("--quick")
 
     # Run with live output
     proc = None
     try:
-        proc = subprocess.Popen(
-            f"bash {shlex.quote(script)} {shlex.quote(domain)} {quick_flag}",
-            shell=True,
-            cwd=BASE_DIR,
-        )
+        proc = subprocess.Popen(cmd, cwd=BASE_DIR)
         proc.wait(timeout=1800)  # 30 min timeout
         return proc.returncode == 0
     except subprocess.TimeoutExpired:
@@ -178,15 +180,13 @@ def run_vuln_scan(domain, quick=False):
 
     log("info", f"Running vulnerability scanner on {domain}...")
     script = os.path.join(TOOLS_DIR, "vuln_scanner.sh")
-    quick_flag = "--quick" if quick else ""
+    cmd = ["bash", script, recon_dir]
+    if quick:
+        cmd.append("--quick")
 
     proc = None
     try:
-        proc = subprocess.Popen(
-            f"bash {shlex.quote(script)} {shlex.quote(recon_dir)} {quick_flag}",
-            shell=True,
-            cwd=BASE_DIR,
-        )
+        proc = subprocess.Popen(cmd, cwd=BASE_DIR)
         proc.wait(timeout=1800)
         return proc.returncode == 0
     except subprocess.TimeoutExpired:
@@ -205,10 +205,8 @@ def generate_reports(domain):
         return 0
 
     log("info", f"Generating reports for {domain}...")
-    script = os.path.join(TOOLS_DIR, "bbagent_report.py")
-    success, output = run_cmd(
-        f"python3 {shlex.quote(script)} {shlex.quote(findings_dir)}"
-    )
+    script = os.path.join(TOOLS_DIR, "beta_ops_report.py")
+    success, output = run_cmd(["python3", script, findings_dir])
     print(output)
 
     # Count generated reports
@@ -337,15 +335,13 @@ def run_cve_hunt(domain):
     log("info", f"Running CVE hunter on {domain}...")
     script = os.path.join(TOOLS_DIR, "cve_hunter.py")
     recon_dir = os.path.join(RECON_DIR, domain)
-    recon_flag = f'--recon-dir "{recon_dir}"' if os.path.isdir(recon_dir) else ""
+    cmd = ["python3", script, domain]
+    if os.path.isdir(recon_dir):
+        cmd.extend(["--recon-dir", recon_dir])
 
     proc = None
     try:
-        proc = subprocess.Popen(
-            f"python3 {shlex.quote(script)} {shlex.quote(domain)} {recon_flag}",
-            shell=True,
-            cwd=BASE_DIR,
-        )
+        proc = subprocess.Popen(cmd, cwd=BASE_DIR)
         proc.wait(timeout=600)
         return proc.returncode == 0
     except subprocess.TimeoutExpired:
@@ -360,18 +356,18 @@ def run_zero_day_fuzzer(domain, deep=False):
     domain = validate_target(domain)
     log("info", f"Running zero-day fuzzer on {domain}...")
     script = os.path.join(TOOLS_DIR, "zero_day_fuzzer.py")
-    deep_flag = "--deep" if deep else ""
 
     # Check if we have recon data with live URLs
     recon_dir = os.path.join(RECON_DIR, domain)
+    cmd = ["python3", script, f"https://{domain}"]
     if os.path.isdir(recon_dir):
-        cmd = f"python3 {shlex.quote(script)} {shlex.quote('https://' + domain)} --recon-dir {shlex.quote(recon_dir)} {deep_flag}"
-    else:
-        cmd = f"python3 {shlex.quote(script)} {shlex.quote('https://' + domain)} {deep_flag}"
+        cmd.extend(["--recon-dir", recon_dir])
+    if deep:
+        cmd.append("--deep")
 
     proc = None
     try:
-        proc = subprocess.Popen(cmd, shell=True, cwd=BASE_DIR)
+        proc = subprocess.Popen(cmd, cwd=BASE_DIR)
         proc.wait(timeout=900)
         return proc.returncode == 0
     except subprocess.TimeoutExpired:
@@ -428,11 +424,11 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python3 bbagent_hunt.py                            Full pipeline (select + hunt)
-  python3 bbagent_hunt.py --target example.com       Hunt specific target
-  python3 bbagent_hunt.py --quick --target example.com  Quick scan
-  python3 bbagent_hunt.py --status                   Show progress
-  python3 bbagent_hunt.py --setup-wordlists          Download wordlists
+  python3 beta_ops_hunt.py                            Full pipeline (select + hunt)
+  python3 beta_ops_hunt.py --target example.com       Hunt specific target
+  python3 beta_ops_hunt.py --quick --target example.com  Quick scan
+  python3 beta_ops_hunt.py --status                   Show progress
+  python3 beta_ops_hunt.py --setup-wordlists          Download wordlists
         """,
     )
     parser.add_argument("--target", type=str, help="Specific target domain to hunt")

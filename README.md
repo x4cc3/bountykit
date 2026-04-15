@@ -1,6 +1,6 @@
-# BBAgent
+# beta-ops
 
-`BBAgent` is a mission-control repository for bug bounty work across Codex, Opencode, Claude, and other agent clients.
+`beta-ops` is a mission-control repository for bug bounty work across Codex, Opencode, Claude, and other agent clients.
 
 This fork keeps the useful hunting content, but the project surface is now organized around a different operating model:
 
@@ -9,7 +9,7 @@ This fork keeps the useful hunting content, but the project surface is now organ
 - `roles/` for specialist briefings
 - `guardrails/` for always-on constraints
 - `manual/` for neutral operating guidance
-- `automation/` and the root `bbagent_*` tools for direct execution
+- `automation/` and the root `beta_ops_*` tools for direct execution
 
 ## Start Here
 
@@ -30,7 +30,7 @@ chmod +x bootstrap.sh
 ./bootstrap.sh --client opencode
 ```
 
-For Opencode, `bootstrap.sh` renders an example config with absolute repo paths into `~/.config/opencode/opencode-bbagent.example.json`. Follow [clients/opencode/README.md](./clients/opencode/README.md) and merge the `default_agent`, `skills`, `agent`, and `command` sections from that rendered file into your live Opencode config.
+For Opencode, `bootstrap.sh` renders an example config with absolute repo paths into `~/.config/opencode/opencode-beta-ops.example.json`. Follow [clients/opencode/README.md](./clients/opencode/README.md) and merge the `default_agent`, `skills`, `agent`, and `command` sections from that rendered file into your live Opencode config.
 
 ## Mission Loop
 
@@ -48,7 +48,7 @@ The repository now revolves around a seven-step loop:
 
 After merging the rendered Opencode config, users get:
 
-- a primary `bbagent` agent for the full workflow
+- a primary `beta-ops` agent for the full workflow
 - slash commands for each track, such as `/field-manual`, `/payload-bank`, `/verdict-gate`, and `/contract-review`
 - slash commands for each playbook, such as `/boundary`, `/mission`, `/survey`, `/probe`, `/screen`, `/gate`, `/pivot`, and `/brief`
 - an autonomous `/mission` workflow for scope-first long runs
@@ -87,37 +87,37 @@ After merging the rendered Opencode config, users get:
 
 The renamed Python and shell entrypoints are still available directly from the repo root:
 
-- `bbagent_hunt.py`
-- `bbagent_recon.sh`
-- `bbagent_learn.py`
-- `bbagent_map.py`
-- `bbagent_validate.py`
-- `bbagent_report.py`
-- `bbagent_idor_scan.py`
-- `bbagent_graphql_idor.py`
-- `bbagent_oauth_audit.py`
-- `bbagent_race_lab.py`
-- `bbagent_ai_probe.py`
-- `bbagent_ai_payloads.py`
-- `bbagent_autonomous.py`
-- `bbagent_lifecycle.py`
-- `bbagent_scope.py`
+- `beta_ops_hunt.py`
+- `beta_ops_recon.sh`
+- `beta_ops_learn.py`
+- `beta_ops_map.py`
+- `beta_ops_validate.py`
+- `beta_ops_report.py`
+- `beta_ops_idor_scan.py`
+- `beta_ops_graphql_idor.py`
+- `beta_ops_oauth_audit.py`
+- `beta_ops_race_lab.py`
+- `beta_ops_ai_probe.py`
+- `beta_ops_ai_payloads.py`
+- `beta_ops_autonomous.py`
+- `beta_ops_lifecycle.py`
+- `beta_ops_scope.py`
 
 Example:
 
 ```bash
-./bbagent_recon.sh target.com
-python3 bbagent_scope.py --csv hackerone-scope.csv
-python3 bbagent_learn.py --tech "nextjs,graphql,jwt"
-python3 bbagent_hunt.py --target target.com --scan-only
-python3 bbagent_validate.py
-python3 bbagent_report.py findings/
+./beta_ops_recon.sh target.com
+python3 beta_ops_scope.py --csv hackerone-scope.csv
+python3 beta_ops_learn.py --tech "nextjs,graphql,jwt"
+python3 beta_ops_hunt.py --target target.com --scan-only
+python3 beta_ops_validate.py
+python3 beta_ops_report.py findings/
 ```
 
 ## Tree Snapshot
 
 ```text
-bbagent/
+beta-ops/
 ├── AGENTS.md
 ├── CLAUDE.md
 ├── SKILL.md
@@ -132,7 +132,7 @@ bbagent/
 ├── automation/
 ├── clients/
 ├── wordlists/
-└── bbagent_*.py / bbagent_*.sh
+└── beta_ops_*.py / beta_ops_*.sh
 ```
 
 ## Attribution

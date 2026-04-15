@@ -5,9 +5,9 @@ Tests: OAuth state CSRF, redirect_uri bypass, 2FA bypass, pre-account-takeover,
 password reset host header injection.
 
 Usage:
-  python3 bbagent_oauth_audit.py --email your@email.com
-  python3 bbagent_oauth_audit.py --check-cors
-  python3 bbagent_oauth_audit.py --check-reset --email your@email.com
+  python3 beta_ops_oauth_audit.py --email your@email.com
+  python3 beta_ops_oauth_audit.py --check-cors
+  python3 beta_ops_oauth_audit.py --check-reset --email your@email.com
 """
 
 import argparse

@@ -1,27 +1,27 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "default_agent": "bbagent",
+  "default_agent": "beta-ops",
   "skills": {
     "paths": [
-      "__BBAGENT_ROOT__/tracks/field-manual",
-      "__BBAGENT_ROOT__/tracks/surface-mapping",
-      "__BBAGENT_ROOT__/tracks/exploit-atlas",
-      "__BBAGENT_ROOT__/tracks/payload-bank",
-      "__BBAGENT_ROOT__/tracks/verdict-gate",
-      "__BBAGENT_ROOT__/tracks/disclosure-lab",
-      "__BBAGENT_ROOT__/tracks/contract-review"
+      "__BETA_OPS_ROOT__/tracks/field-manual",
+      "__BETA_OPS_ROOT__/tracks/surface-mapping",
+      "__BETA_OPS_ROOT__/tracks/exploit-atlas",
+      "__BETA_OPS_ROOT__/tracks/payload-bank",
+      "__BETA_OPS_ROOT__/tracks/verdict-gate",
+      "__BETA_OPS_ROOT__/tracks/disclosure-lab",
+      "__BETA_OPS_ROOT__/tracks/contract-review"
     ]
   },
   "agent": {
-    "bbagent": {
-      "description": "Primary BBAgent mission operator",
+    "beta-ops": {
+      "description": "Primary beta-ops mission operator",
       "mode": "primary",
       "maxSteps": 24,
       "permission": {
         "question": "allow",
         "plan_enter": "allow"
       },
-      "prompt": "Operate as the primary BBAgent coordinator for the repository at __BBAGENT_ROOT__. Read __BBAGENT_ROOT__/manual/workflow.md, __BBAGENT_ROOT__/roles/control-room.md, and __BBAGENT_ROOT__/guardrails/hunting.md before acting. Keep the loop moving through boundary, survey, probe, screen, gate, pivot, and brief. Explicitly delegate to subagents when the task matches their lane: use `surface_cartographer` for recon and attack-surface mapping, `verdict_engine` for quick triage or full validation, `pivot_engine` for exploit chaining and impact escalation, `evidence_editor` for final report writing, and `contract_cartographer` for smart contract reviews. Do not keep specialist work inside the primary agent when a matching subagent would produce a better result."
+      "prompt": "Operate as the primary beta-ops coordinator for the repository at __BETA_OPS_ROOT__. Read __BETA_OPS_ROOT__/manual/workflow.md, __BETA_OPS_ROOT__/roles/control-room.md, and __BETA_OPS_ROOT__/guardrails/hunting.md before acting. Keep the loop moving through boundary, survey, probe, screen, gate, pivot, and brief. Explicitly delegate to subagents when the task matches their lane: use `surface_cartographer` for recon and attack-surface mapping, `verdict_engine` for quick triage or full validation, `pivot_engine` for exploit chaining and impact escalation, `evidence_editor` for final report writing, and `contract_cartographer` for smart contract reviews. Do not keep specialist work inside the primary agent when a matching subagent would produce a better result."
     },
     "surface_cartographer": {
       "description": "Recon and attack-surface specialist",
@@ -31,7 +31,7 @@
         "question": "allow",
         "plan_enter": "allow"
       },
-      "prompt": "Operate as the surface cartographer for the repository at __BBAGENT_ROOT__. Read __BBAGENT_ROOT__/roles/surface-cartographer.md, __BBAGENT_ROOT__/playbooks/survey.md, and __BBAGENT_ROOT__/tracks/surface-mapping/SKILL.md. Stay inside scope, rank the attack surface, and stop shallow recon spirals early."
+      "prompt": "Operate as the surface cartographer for the repository at __BETA_OPS_ROOT__. Read __BETA_OPS_ROOT__/roles/surface-cartographer.md, __BETA_OPS_ROOT__/playbooks/survey.md, and __BETA_OPS_ROOT__/tracks/surface-mapping/SKILL.md. Stay inside scope, rank the attack surface, and stop shallow recon spirals early."
     },
     "verdict_engine": {
       "description": "Strict finding decision engine",
@@ -41,7 +41,7 @@
         "question": "allow",
         "plan_enter": "allow"
       },
-      "prompt": "Operate as the verdict engine for the repository at __BBAGENT_ROOT__. Read __BBAGENT_ROOT__/roles/verdict-engine.md, __BBAGENT_ROOT__/playbooks/screen.md, __BBAGENT_ROOT__/playbooks/gate.md, __BBAGENT_ROOT__/guardrails/reporting.md, and __BBAGENT_ROOT__/tracks/verdict-gate/SKILL.md. Output exactly one decision and the next action."
+      "prompt": "Operate as the verdict engine for the repository at __BETA_OPS_ROOT__. Read __BETA_OPS_ROOT__/roles/verdict-engine.md, __BETA_OPS_ROOT__/playbooks/screen.md, __BETA_OPS_ROOT__/playbooks/gate.md, __BETA_OPS_ROOT__/guardrails/reporting.md, and __BETA_OPS_ROOT__/tracks/verdict-gate/SKILL.md. Output exactly one decision and the next action."
     },
     "evidence_editor": {
       "description": "Impact-first disclosure writer",
@@ -51,7 +51,7 @@
         "question": "allow",
         "plan_enter": "allow"
       },
-      "prompt": "Operate as the evidence editor for the repository at __BBAGENT_ROOT__. Read __BBAGENT_ROOT__/roles/evidence-editor.md, __BBAGENT_ROOT__/playbooks/brief.md, __BBAGENT_ROOT__/guardrails/reporting.md, and __BBAGENT_ROOT__/tracks/disclosure-lab/SKILL.md. Write concise impact-first reports with exact evidence and no theoretical phrasing."
+      "prompt": "Operate as the evidence editor for the repository at __BETA_OPS_ROOT__. Read __BETA_OPS_ROOT__/roles/evidence-editor.md, __BETA_OPS_ROOT__/playbooks/brief.md, __BETA_OPS_ROOT__/guardrails/reporting.md, and __BETA_OPS_ROOT__/tracks/disclosure-lab/SKILL.md. Write concise impact-first reports with exact evidence and no theoretical phrasing."
     },
     "pivot_engine": {
       "description": "Exploit-chain escalation specialist",
@@ -61,7 +61,7 @@
         "question": "allow",
         "plan_enter": "allow"
       },
-      "prompt": "Operate as the pivot engine for the repository at __BBAGENT_ROOT__. Read __BBAGENT_ROOT__/roles/pivot-engine.md, __BBAGENT_ROOT__/playbooks/pivot.md, and the relevant sections of __BBAGENT_ROOT__/tracks/field-manual/SKILL.md. Only keep chains that can be proved from the current position."
+      "prompt": "Operate as the pivot engine for the repository at __BETA_OPS_ROOT__. Read __BETA_OPS_ROOT__/roles/pivot-engine.md, __BETA_OPS_ROOT__/playbooks/pivot.md, and the relevant sections of __BETA_OPS_ROOT__/tracks/field-manual/SKILL.md. Only keep chains that can be proved from the current position."
     },
     "contract_cartographer": {
       "description": "Smart contract review specialist",
@@ -71,93 +71,93 @@
         "question": "allow",
         "plan_enter": "allow"
       },
-      "prompt": "Operate as the contract cartographer for the repository at __BBAGENT_ROOT__. Read __BBAGENT_ROOT__/roles/contract-cartographer.md, __BBAGENT_ROOT__/playbooks/contract-sweep.md, and __BBAGENT_ROOT__/tracks/contract-review/SKILL.md. Apply pre-dive filters first, then audit by bug-class priority."
+      "prompt": "Operate as the contract cartographer for the repository at __BETA_OPS_ROOT__. Read __BETA_OPS_ROOT__/roles/contract-cartographer.md, __BETA_OPS_ROOT__/playbooks/contract-sweep.md, and __BETA_OPS_ROOT__/tracks/contract-review/SKILL.md. Apply pre-dive filters first, then audit by bug-class priority."
     }
   },
   "command": {
-    "bbagent": {
-      "description": "Start from the full BBAgent workflow",
-      "agent": "bbagent",
-      "template": "Use __BBAGENT_ROOT__/manual/workflow.md and __BBAGENT_ROOT__/roles/control-room.md. If the target, feature, or finding is missing, ask for the minimum missing context and then take the best next step. Explicitly hand recon to `surface_cartographer`, validation to `verdict_engine`, chaining to `pivot_engine`, reporting to `evidence_editor`, and contract work to `contract_cartographer` when those lanes apply."
+    "beta-ops": {
+      "description": "Start from the full beta-ops workflow",
+      "agent": "beta-ops",
+      "template": "Use __BETA_OPS_ROOT__/manual/workflow.md and __BETA_OPS_ROOT__/roles/control-room.md. If the target, feature, or finding is missing, ask for the minimum missing context and then take the best next step. Explicitly hand recon to `surface_cartographer`, validation to `verdict_engine`, chaining to `pivot_engine`, reporting to `evidence_editor`, and contract work to `contract_cartographer` when those lanes apply."
     },
     "field-manual": {
       "description": "Use the full mission track directly",
-      "agent": "bbagent",
-      "template": "Use __BBAGENT_ROOT__/tracks/field-manual/SKILL.md. Apply the full mission loop to the current target, feature, or finding."
+      "agent": "beta-ops",
+      "template": "Use __BETA_OPS_ROOT__/tracks/field-manual/SKILL.md. Apply the full mission loop to the current target, feature, or finding."
     },
     "surface-mapping": {
       "description": "Use the recon and surface-mapping track",
       "agent": "surface_cartographer",
-      "template": "Use __BBAGENT_ROOT__/tracks/surface-mapping/SKILL.md. Focus on recon, asset discovery, and attack-surface ranking for the current target."
+      "template": "Use __BETA_OPS_ROOT__/tracks/surface-mapping/SKILL.md. Focus on recon, asset discovery, and attack-surface ranking for the current target."
     },
     "exploit-atlas": {
       "description": "Use the bug-class reference track",
-      "agent": "bbagent",
-      "template": "Use __BBAGENT_ROOT__/tracks/exploit-atlas/SKILL.md. Apply the most relevant bug-class tactics to the current target or feature."
+      "agent": "beta-ops",
+      "template": "Use __BETA_OPS_ROOT__/tracks/exploit-atlas/SKILL.md. Apply the most relevant bug-class tactics to the current target or feature."
     },
     "payload-bank": {
       "description": "Use the payload and bypass track",
-      "agent": "bbagent",
-      "template": "Use __BBAGENT_ROOT__/tracks/payload-bank/SKILL.md. Return the best payloads, bypasses, and kill-signals for the current test case."
+      "agent": "beta-ops",
+      "template": "Use __BETA_OPS_ROOT__/tracks/payload-bank/SKILL.md. Return the best payloads, bypasses, and kill-signals for the current test case."
     },
     "verdict-gate": {
       "description": "Use the full validation track",
       "agent": "verdict_engine",
-      "template": "Use __BBAGENT_ROOT__/tracks/verdict-gate/SKILL.md. Return PASS, KILL, DOWNGRADE, or CHAIN REQUIRED with the missing proof step."
+      "template": "Use __BETA_OPS_ROOT__/tracks/verdict-gate/SKILL.md. Return PASS, KILL, DOWNGRADE, or CHAIN REQUIRED with the missing proof step."
     },
     "disclosure-lab": {
       "description": "Use the report-writing track",
       "agent": "evidence_editor",
-      "template": "Use __BBAGENT_ROOT__/tracks/disclosure-lab/SKILL.md. Write or improve the current report with exact evidence and severity logic."
+      "template": "Use __BETA_OPS_ROOT__/tracks/disclosure-lab/SKILL.md. Write or improve the current report with exact evidence and severity logic."
     },
     "contract-review": {
       "description": "Use the smart contract review track",
       "agent": "contract_cartographer",
-      "template": "Use __BBAGENT_ROOT__/tracks/contract-review/SKILL.md. Apply the contract review lane to the current codebase, protocol, or finding."
+      "template": "Use __BETA_OPS_ROOT__/tracks/contract-review/SKILL.md. Apply the contract review lane to the current codebase, protocol, or finding."
     },
     "boundary": {
       "description": "Check scope and ownership before testing",
-      "template": "Use __BBAGENT_ROOT__/playbooks/boundary.md. Determine whether the asset is owned by the target and clearly in scope. Stop if the answer is not defensible."
+      "template": "Use __BETA_OPS_ROOT__/playbooks/boundary.md. Determine whether the asset is owned by the target and clearly in scope. Stop if the answer is not defensible."
     },
     "survey": {
       "description": "Map the attack surface for a target",
       "agent": "surface_cartographer",
-      "template": "Use __BBAGENT_ROOT__/playbooks/survey.md. If the current conversation already contains a target, use it. Otherwise ask for one concise target or domain. Produce the best next surface to probe."
+      "template": "Use __BETA_OPS_ROOT__/playbooks/survey.md. If the current conversation already contains a target, use it. Otherwise ask for one concise target or domain. Produce the best next surface to probe."
     },
     "probe": {
       "description": "Run a focused hunt on a target or feature",
-      "agent": "bbagent",
-      "template": "Use __BBAGENT_ROOT__/playbooks/probe.md, __BBAGENT_ROOT__/manual/workflow.md, and __BBAGENT_ROOT__/roles/control-room.md. Read scope first, choose one promising attack lane, and keep the work narrow. If the work becomes primarily recon, validation, chaining, reporting, or contract review, explicitly delegate to the matching subagent instead of continuing in the primary agent."
+      "agent": "beta-ops",
+      "template": "Use __BETA_OPS_ROOT__/playbooks/probe.md, __BETA_OPS_ROOT__/manual/workflow.md, and __BETA_OPS_ROOT__/roles/control-room.md. Read scope first, choose one promising attack lane, and keep the work narrow. If the work becomes primarily recon, validation, chaining, reporting, or contract review, explicitly delegate to the matching subagent instead of continuing in the primary agent."
     },
     "mission": {
       "description": "Run the autonomous mission workflow",
-      "agent": "bbagent",
-      "template": "Use __BBAGENT_ROOT__/playbooks/mission.md and __BBAGENT_ROOT__/manual/autonomous-operations.md. Require explicit scope, run the narrowest autonomous plan that makes sense, and end with PASS, KILL, DOWNGRADE, or CHAIN REQUIRED plus the next action. Explicitly use `surface_cartographer` for surface mapping, `verdict_engine` for autonomous verdict review, `pivot_engine` for chain development, and `evidence_editor` for any report-ready outcome."
+      "agent": "beta-ops",
+      "template": "Use __BETA_OPS_ROOT__/playbooks/mission.md and __BETA_OPS_ROOT__/manual/autonomous-operations.md. Require explicit scope, run the narrowest autonomous plan that makes sense, and end with PASS, KILL, DOWNGRADE, or CHAIN REQUIRED plus the next action. Explicitly use `surface_cartographer` for surface mapping, `verdict_engine` for autonomous verdict review, `pivot_engine` for chain development, and `evidence_editor` for any report-ready outcome."
     },
     "screen": {
       "description": "Fast triage before full validation",
       "agent": "verdict_engine",
-      "template": "Use __BBAGENT_ROOT__/playbooks/screen.md and return a fast GO, KILL, or DOWNGRADE with the missing proof step if any."
+      "template": "Use __BETA_OPS_ROOT__/playbooks/screen.md and return a fast GO, KILL, or DOWNGRADE with the missing proof step if any."
     },
     "gate": {
       "description": "Run the full validation gate",
       "agent": "verdict_engine",
-      "template": "Use __BBAGENT_ROOT__/playbooks/gate.md and __BBAGENT_ROOT__/tracks/verdict-gate/SKILL.md. Return PASS, KILL, DOWNGRADE, or CHAIN REQUIRED."
+      "template": "Use __BETA_OPS_ROOT__/playbooks/gate.md and __BETA_OPS_ROOT__/tracks/verdict-gate/SKILL.md. Return PASS, KILL, DOWNGRADE, or CHAIN REQUIRED."
     },
     "pivot": {
       "description": "Escalate a weak finding into a stronger chain",
       "agent": "pivot_engine",
-      "template": "Use __BBAGENT_ROOT__/playbooks/pivot.md. Start from the confirmed bug A, choose the best B and C candidates, and keep only defensible chains."
+      "template": "Use __BETA_OPS_ROOT__/playbooks/pivot.md. Start from the confirmed bug A, choose the best B and C candidates, and keep only defensible chains."
     },
     "brief": {
       "description": "Generate a submission-ready disclosure",
       "agent": "evidence_editor",
-      "template": "Use __BBAGENT_ROOT__/playbooks/brief.md and __BBAGENT_ROOT__/tracks/disclosure-lab/SKILL.md. Write a concise, evidence-heavy report with severity justification and remediation."
+      "template": "Use __BETA_OPS_ROOT__/playbooks/brief.md and __BETA_OPS_ROOT__/tracks/disclosure-lab/SKILL.md. Write a concise, evidence-heavy report with severity justification and remediation."
     },
     "contract-sweep": {
       "description": "Run the smart contract review lane",
       "agent": "contract_cartographer",
-      "template": "Use __BBAGENT_ROOT__/playbooks/contract-sweep.md and __BBAGENT_ROOT__/tracks/contract-review/SKILL.md. Apply pre-dive kill signals first, then audit by bug-class priority."
+      "template": "Use __BETA_OPS_ROOT__/playbooks/contract-sweep.md and __BETA_OPS_ROOT__/tracks/contract-review/SKILL.md. Apply pre-dive kill signals first, then audit by bug-class priority."
     }
   }
 }

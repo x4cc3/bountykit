@@ -1,6 +1,6 @@
 # contract-notes/
 
-Long-form smart contract reference material for the BBAgent contract-review lane.
+Long-form smart contract reference material for the beta-ops contract-review lane.
 
 ## Files
 

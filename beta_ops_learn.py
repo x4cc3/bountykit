@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-bbagent_learn.py  Fetches recent bug intelligence for a tech stack.
+beta_ops_learn.py  Fetches recent bug intelligence for a tech stack.
 Queries GitHub Advisory Database, NVD CVE API, and HackerOne Hacktivity.
 
 Usage:
-  python3 ./bbagent_learn.py --tech "nextjs,graphql"
-  python3 ./bbagent_learn.py --tech "nextjs,graphql" --target target.com --output recon/target.com/intel.md
-  python3 ./bbagent_learn.py --tech "solidity" --hackerone-program target-program
+  python3 ./beta_ops_learn.py --tech "nextjs,graphql"
+  python3 ./beta_ops_learn.py --tech "nextjs,graphql" --target target.com --output recon/target.com/intel.md
+  python3 ./beta_ops_learn.py --tech "solidity" --hackerone-program target-program
 """
 
 import argparse
@@ -20,7 +20,7 @@ import urllib.error
 from datetime import datetime
 from typing import Optional
 
-from bbagent_paths import repo_path
+from beta_ops_paths import repo_path
 
 # macOS: Python may not have system SSL certs. Use unverified context for API queries.
 _SSL_CTX = ssl.create_default_context()

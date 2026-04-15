@@ -1,6 +1,6 @@
 # Codex Setup
 
-Use BBAgent in Codex by installing the tracks and using the repo's `AGENTS.md` as the local operating guide.
+Use beta-ops in Codex by installing the tracks and using the repo's `AGENTS.md` as the local operating guide.
 
 ## Files
 
@@ -16,7 +16,7 @@ From the repo root:
 ./bootstrap.sh --client codex
 ```
 
-That copies the BBAgent tracks into:
+That copies the beta-ops tracks into:
 
 ```bash
 ~/.codex/skills
@@ -58,7 +58,7 @@ Useful narrower tracks:
 - [disclosure-lab](../../tracks/disclosure-lab/SKILL.md) for report writing
 - [contract-review](../../tracks/contract-review/SKILL.md) for smart contracts
 
-For autonomous runs, use the repo-local mission workflow in [playbooks/mission.md](../../playbooks/mission.md), generate scope JSON with `python3 bbagent_scope.py --csv hackerone-scope.csv`, and run `python3 bbagent_autonomous.py --target ... --scope-file ...`.
+For autonomous runs, use the repo-local mission workflow in [playbooks/mission.md](../../playbooks/mission.md), generate scope JSON with `python3 beta_ops_scope.py --csv hackerone-scope.csv`, and run `python3 beta_ops_autonomous.py --target ... --scope-file ...`.
 
 ## Verification
 
@@ -68,4 +68,4 @@ Useful checks:
 ls ~/.codex/skills
 ```
 
-You should see the BBAgent track directories listed there after installation.
+You should see the beta-ops track directories listed there after installation.

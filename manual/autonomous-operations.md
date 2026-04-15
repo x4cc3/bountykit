@@ -1,6 +1,6 @@
 # Autonomous Operations
 
-This is the autonomous layer for BBAgent. It exists to keep long-running hunts disciplined instead of turning the repo into a blind scanner.
+This is the autonomous layer for beta-ops. It exists to keep long-running hunts disciplined instead of turning the repo into a blind scanner.
 
 ## Goal
 
@@ -14,7 +14,7 @@ Move from tool bundle to autonomous mission loop:
 
 ## State Machine
 
-The mission runner in `bbagent_autonomous.py` uses these states:
+The mission runner in `beta_ops_autonomous.py` uses these states:
 
 - `boundary` - load scope, verify explicit allowlist, refuse unknown targets
 - `survey` - run recon and stop if the surface is cold or broken
@@ -50,7 +50,7 @@ For best results, store candidate findings as structured evidence packs describe
 
 ## Lifecycle Heuristics
 
-`bbagent_lifecycle.py` now prefers actual evidence packs over category names alone.
+`beta_ops_lifecycle.py` now prefers actual evidence packs over category names alone.
 
 - `scope`, `request`, and `response` are mandatory for survival
 - complete packs can advance to `PASS`
@@ -64,12 +64,12 @@ This is still not a replacement for full `/gate`, but it is much closer to proof
 You can generate `scope/*.json` from a program page or local scope text:
 
 ```bash
-python3 bbagent_scope.py --csv hackerone-scope.csv
-python3 bbagent_scope.py --url "https://hackerone.com/example"
-python3 bbagent_scope.py --text-file scope-policy.txt
+python3 beta_ops_scope.py --csv hackerone-scope.csv
+python3 beta_ops_scope.py --url "https://hackerone.com/example"
+python3 beta_ops_scope.py --text-file scope-policy.txt
 ```
 
-That generated JSON can be passed directly into `bbagent_autonomous.py`.
+That generated JSON can be passed directly into `beta_ops_autonomous.py`.
 
 For HackerOne, prefer the CSV export when available. It is more stable than HTML scraping and carries asset-level scope data directly.
 
@@ -79,14 +79,14 @@ Recommended flow inside Opencode:
 
 1. `/boundary` with explicit scope text or a scope file excerpt
 2. `/mission` to set the autonomous run plan
-3. `/survey` or direct `python3 bbagent_autonomous.py ...` execution for the scoped target
+3. `/survey` or direct `python3 beta_ops_autonomous.py ...` execution for the scoped target
 4. `/screen` or `/gate` against the generated autonomous verdict
 5. `/brief` only if the verdict is strong enough
 
 ## Command Example
 
 ```bash
-python3 bbagent_autonomous.py \
+python3 beta_ops_autonomous.py \
   --target app.example.com \
   --scope-file scope/example.json \
   --mission-name example-app \

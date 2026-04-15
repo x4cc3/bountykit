@@ -4,12 +4,12 @@ Hai Payload Builder — Generate invisible prompt injection payloads for HackerO
 Embeds hidden instructions in bug report text using Sneaky Bits encoding.
 
 Usage:
-  python3 bbagent_ai_payloads.py --attack system_prompt
-  python3 bbagent_ai_payloads.py --attack severity_escalation
-  python3 bbagent_ai_payloads.py --attack data_exfil
-  python3 bbagent_ai_payloads.py --attack cross_tenant
-  python3 bbagent_ai_payloads.py --attack all --output-dir payloads/
-  python3 bbagent_ai_payloads.py --custom "Your custom injection text"
+  python3 beta_ops_ai_payloads.py --attack system_prompt
+  python3 beta_ops_ai_payloads.py --attack severity_escalation
+  python3 beta_ops_ai_payloads.py --attack data_exfil
+  python3 beta_ops_ai_payloads.py --attack cross_tenant
+  python3 beta_ops_ai_payloads.py --attack all --output-dir payloads/
+  python3 beta_ops_ai_payloads.py --custom "Your custom injection text"
 """
 
 import argparse

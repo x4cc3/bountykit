@@ -4,8 +4,8 @@
 # It runs all automation tools in the right order.
 #
 # Usage:
-#   chmod +x bbagent_lab.sh
-#   ./bbagent_lab.sh
+#   chmod +x beta_ops_lab.sh
+#   ./beta_ops_lab.sh
 
 set -e
 
@@ -94,7 +94,7 @@ sleep 2
 echo ""
 echo "══ PHASE 2: Cross-User IDOR Scanner ══"
 echo ""
-CMD="python3 $TOOLS_DIR/bbagent_idor_scan.py \
+CMD="python3 $TOOLS_DIR/beta_ops_idor_scan.py \
   --token-a $TOKEN_A \
   --token-b $TOKEN_B"
 
@@ -111,7 +111,7 @@ sleep 2
 echo ""
 echo "══ PHASE 3: Auth / OAuth Checks ══"
 echo ""
-python3 "$TOOLS_DIR/bbagent_oauth_audit.py" \
+python3 "$TOOLS_DIR/beta_ops_oauth_audit.py" \
   --check-cors \
   --check-oauth \
   --check-ssrf \
@@ -120,7 +120,7 @@ python3 "$TOOLS_DIR/bbagent_oauth_audit.py" \
 if [[ -n "$EMAIL_A" ]]; then
   echo ""
   echo "  [Password Reset Test] email=$EMAIL_A"
-  python3 "$TOOLS_DIR/bbagent_oauth_audit.py" \
+  python3 "$TOOLS_DIR/beta_ops_oauth_audit.py" \
     --check-reset \
     --email "$EMAIL_A" \
     2>&1 | tee -a "$LOG"
@@ -134,7 +134,7 @@ echo ""
 
 # Negative bounty test (safe — doesn't actually award, tests validation)
 if [[ -n "$REPORT_ID" ]]; then
-  python3 "$TOOLS_DIR/bbagent_race_lab.py" \
+  python3 "$TOOLS_DIR/beta_ops_race_lab.py" \
     --token-a "$TOKEN_A" \
     --test negative-bounty \
     --report-id "$REPORT_ID" \
@@ -151,7 +151,7 @@ echo "MANUAL TESTS STILL REQUIRED:"
 echo "  [ ] Hai AI — test IDOR via chat (Day 17) — must be done in browser"
 echo "  [ ] GitHub OAuth redirect_uri — browser + Burp (Day 9)"
 echo "  [ ] SSRF webhook — sandbox program integration settings (Day 15)"
-echo "  [ ] 2FA rate limit — run: python3 bbagent_race_lab.py --token-a TOKEN_B --test 2fa"
+echo "  [ ] 2FA rate limit — run: python3 beta_ops_race_lab.py --token-a TOKEN_B --test 2fa"
 echo "  [ ] PullRequest.com — manual browse + Autorize (Day 16)"
 echo "  [ ] Stored XSS — submit report with payloads (Day 14)"
 echo ""

@@ -1,4 +1,4 @@
-# BBAgent Workflow
+# beta-ops Workflow
 
 This repository uses a control-room model:
 

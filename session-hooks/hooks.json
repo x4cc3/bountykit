@@ -2,7 +2,7 @@
   "hooks": [
     {
       "event": "SessionStart",
-      "command": "echo 'BBAgent session started. Run /survey <target> to map the surface or /probe to continue an active target. Check scope first.'"
+      "command": "echo 'beta-ops session started. Run /survey <target> to map the surface or /probe to continue an active target. Check scope first.'"
     },
     {
       "event": "SessionStop",

@@ -1209,14 +1209,14 @@ To use this as a Claude Code skill, copy this file to your skills directory:
 
 ```bash
 # Option A: Clone the repo elsewhere and link this skill folder
-git clone <your-fork-or-local-copy> ~/src/bbagent
+git clone <your-fork-or-local-copy> ~/src/beta-ops
 mkdir -p ~/.claude/skills
-ln -s ~/src/bbagent/tracks/field-manual ~/.claude/skills/bbagent
+ln -s ~/src/beta-ops/tracks/field-manual ~/.claude/skills/beta-ops
 
 # Option B: Direct copy
-mkdir -p ~/.claude/skills/bbagent
+mkdir -p ~/.claude/skills/beta-ops
 curl -s <your-raw-skill-url> \
-  -o ~/.claude/skills/bbagent/SKILL.md
+  -o ~/.claude/skills/beta-ops/SKILL.md
 ```
 
 Then in Claude Code, this skill loads automatically when you ask about bug bounty, recon, or vulnerability hunting.

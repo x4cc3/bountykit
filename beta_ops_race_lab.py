@@ -5,9 +5,9 @@ Tests: bounty double-spend, 2FA rate limits, negative bounty amounts, report act
 Uses threading for true parallel requests.
 
 Usage:
-  python3 bbagent_race_lab.py --token-a TOKEN --test 2fa
-  python3 bbagent_race_lab.py --token-a TOKEN --token-b TOKEN_B --test bounty --report-id ID
-  python3 bbagent_race_lab.py --token-a TOKEN --test negative-bounty --report-id ID
+  python3 beta_ops_race_lab.py --token-a TOKEN --test 2fa
+  python3 beta_ops_race_lab.py --token-a TOKEN --token-b TOKEN_B --test bounty --report-id ID
+  python3 beta_ops_race_lab.py --token-a TOKEN --test negative-bounty --report-id ID
 """
 
 import argparse

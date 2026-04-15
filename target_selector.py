@@ -14,7 +14,7 @@ import os
 import argparse
 from datetime import datetime
 
-from bbagent_paths import repo_path
+from beta_ops_paths import repo_path
 
 TARGETS_DIR = repo_path("targets")
 DEFAULT_OUTPUT = os.path.join(TARGETS_DIR, "selected_targets.json")

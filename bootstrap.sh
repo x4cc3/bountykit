@@ -1,5 +1,5 @@
 #!/bin/bash
-# BBAgent client bootstrap
+# beta-ops client bootstrap
 
 set -euo pipefail
 
@@ -43,7 +43,7 @@ install_claude() {
     local skills_dir="${HOME}/.claude/skills"
     local commands_dir="${HOME}/.claude/commands"
 
-    echo "Installing Claude-facing BBAgent assets..."
+    echo "Installing Claude-facing beta-ops assets..."
     copy_tracks "${skills_dir}"
     run "mkdir -p \"$commands_dir\""
     for playbook_file in "$SCRIPT_DIR"/playbooks/*.md; do
@@ -60,7 +60,7 @@ install_claude() {
 install_codex() {
     local skills_dir="${HOME}/.codex/skills"
 
-    echo "Installing Codex-facing BBAgent tracks..."
+    echo "Installing Codex-facing beta-ops tracks..."
     copy_tracks "${skills_dir}"
     echo "Codex tracks installed to ${skills_dir}"
     echo "Use this repo's AGENTS.md inside the working tree for Codex guidance."
@@ -68,11 +68,11 @@ install_codex() {
 
 install_opencode() {
     local opencode_dir="${HOME}/.config/opencode"
-    local example_dest="${opencode_dir}/opencode-bbagent.example.json"
+    local example_dest="${opencode_dir}/opencode-beta-ops.example.json"
 
     echo "Installing Opencode example config..."
     run "mkdir -p \"$opencode_dir\""
-    run "sed -e \"s|__BBAGENT_ROOT__|${SCRIPT_DIR}|g\" -e \"s|__HOME__|${HOME}|g\" \"$SCRIPT_DIR/clients/opencode/opencode.example.json\" > \"$example_dest\""
+    run "sed -e \"s|__BETA_OPS_ROOT__|${SCRIPT_DIR}|g\" -e \"s|__HOME__|${HOME}|g\" \"$SCRIPT_DIR/clients/opencode/opencode.example.json\" > \"$example_dest\""
     echo "Opencode example config copied to ${example_dest}"
     echo "Merge the skills, agent, and command sections into your active ~/.config/opencode/opencode.json."
 }

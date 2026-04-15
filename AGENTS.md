@@ -1,4 +1,4 @@
-# AGENTS.md — BBAgent Control Surface
+# AGENTS.md — beta-ops Control Surface
 
 Use this repository as an operations pack, not as a monolithic skill dump.
 

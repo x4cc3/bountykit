@@ -56,6 +56,21 @@ count_findings() {
     fi
 }
 
+probe_url() {
+    local url="$1"
+    local headers_file body_file status content_type body_size body_head
+    headers_file=$(mktemp)
+    body_file=$(mktemp)
+
+    status=$(curl -sL -D "$headers_file" -o "$body_file" -w "%{http_code}" --max-time 5 "$url" 2>/dev/null || echo "000")
+    content_type=$(grep -i '^content-type:' "$headers_file" | tail -1 | cut -d: -f2- | tr -d '\r' | xargs)
+    body_size=$(wc -c < "$body_file" | tr -d ' ')
+    body_head=$(head -c 256 "$body_file" | tr '\r' ' ' | tr '\n' ' ')
+
+    rm -f "$headers_file" "$body_file"
+    printf '%s\t%s\t%s\t%s\n' "$status" "$content_type" "$body_size" "$body_head"
+}
+
 # Collect live URLs for scanning
 LIVE_URLS="$RECON_DIR/live/urls.txt"
 PARAM_URLS="$RECON_DIR/urls/with_params.txt"
@@ -66,7 +81,7 @@ if [ ! -s "$LIVE_URLS" ] 2>/dev/null; then
     if [ -s "$RECON_DIR/live/httpx_full.txt" ]; then
         awk '{print $1}' "$RECON_DIR/live/httpx_full.txt" > "$LIVE_URLS"
     else
-        log_err "No live hosts data found in recon. Run bbagent_recon.sh first."
+        log_err "No live hosts data found in recon. Run beta_ops_recon.sh first."
         exit 1
     fi
 fi
@@ -229,9 +244,13 @@ fi
 if [ -s "$RECON_DIR/urls/sensitive_paths.txt" ]; then
     log_step "Verifying sensitive paths from recon..."
     while IFS= read -r url; do
-        STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "$url" 2>/dev/null || echo "000")
-        if [ "$STATUS" = "200" ]; then
-            echo "$STATUS $url" >> "$FINDINGS_DIR/exposure/verified_sensitive.txt"
+        IFS=$'\t' read -r STATUS CONTENT_TYPE BODY_SIZE BODY_HEAD < <(probe_url "$url")
+        BODY_HEAD_LC=$(printf '%s' "$BODY_HEAD" | tr '[:upper:]' '[:lower:]')
+        if [ "$STATUS" = "200" ] \
+            && [[ "$CONTENT_TYPE" != text/html* ]] \
+            && [[ "$BODY_HEAD_LC" != *"<!doctype"* ]] \
+            && [[ "$BODY_HEAD_LC" != *"<html"* ]]; then
+            echo "$STATUS $CONTENT_TYPE $BODY_SIZE $url" >> "$FINDINGS_DIR/exposure/verified_sensitive.txt"
         fi
     done < <(head -50 "$RECON_DIR/urls/sensitive_paths.txt")
 
@@ -341,11 +360,16 @@ fi
 if [ -s "$RECON_DIR/urls/api_endpoints.txt" ]; then
     log_step "Testing API endpoints for unauthenticated access..."
     while IFS= read -r api_url; do
-        STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "$api_url" 2>/dev/null || echo "000")
-        BODY_SIZE=$(curl -s --max-time 5 "$api_url" 2>/dev/null | wc -c | tr -d ' ')
-        # Flag endpoints returning 200 with substantial body (not just error pages)
-        if [ "$STATUS" = "200" ] && [ "$BODY_SIZE" -gt 500 ]; then
-            echo "$STATUS $BODY_SIZE $api_url" >> "$FINDINGS_DIR/auth_bypass/unauth_api_access.txt"
+        IFS=$'\t' read -r STATUS CONTENT_TYPE BODY_SIZE BODY_HEAD < <(probe_url "$api_url")
+        CONTENT_TYPE_LC=$(printf '%s' "$CONTENT_TYPE" | tr '[:upper:]' '[:lower:]')
+        BODY_HEAD_LC=$(printf '%s' "$BODY_HEAD" | tr '[:upper:]' '[:lower:]')
+        # Flag endpoints returning JSON-like responses with substantial bodies.
+        if [ "$STATUS" = "200" ] \
+            && [ "$BODY_SIZE" -gt 500 ] \
+            && [[ "$CONTENT_TYPE_LC" == application/json* || "$CONTENT_TYPE_LC" == application/problem+json* || "$CONTENT_TYPE_LC" == text/json* ]] \
+            && [[ "$BODY_HEAD_LC" != *"<!doctype"* ]] \
+            && [[ "$BODY_HEAD_LC" != *"<html"* ]]; then
+            echo "$STATUS $CONTENT_TYPE $BODY_SIZE $api_url" >> "$FINDINGS_DIR/auth_bypass/unauth_api_access.txt"
         fi
     done < <(head -30 "$RECON_DIR/urls/api_endpoints.txt")
     UNAUTH_COUNT=$(count_findings "$FINDINGS_DIR/auth_bypass/unauth_api_access.txt")
@@ -423,5 +447,5 @@ echo ""
 echo "  All findings saved to: $FINDINGS_DIR/"
 echo ""
 echo "  Next: Generate reports"
-echo "    python3 ./bbagent_report.py $FINDINGS_DIR"
+echo "    python3 ./beta_ops_report.py $FINDINGS_DIR"
 echo "============================================="

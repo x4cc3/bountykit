@@ -15,23 +15,47 @@ import os
 import re
 import subprocess
 import sys
+import urllib.error
+import urllib.request
 from datetime import datetime
 from urllib.parse import quote
 
-from bbagent_paths import repo_path
+from beta_ops_paths import repo_path
 
 BASE_DIR = repo_path()
 FINDINGS_DIR = repo_path("findings")
+TARGET_RE = re.compile(r"^[A-Za-z0-9.-]+$")
 
 
-def run_cmd(cmd, timeout=30):
+def run_cmd(cmd: list[str], timeout=30, input_text: str | None = None):
     try:
         result = subprocess.run(
-            cmd, shell=True, capture_output=True, text=True, timeout=timeout
+            cmd,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            input=input_text,
         )
         return result.returncode == 0, result.stdout.strip()
     except Exception as e:
         return False, str(e)
+
+
+def validate_domain(domain: str) -> str:
+    if not domain or not TARGET_RE.fullmatch(domain):
+        raise SystemExit(f"Unsupported domain format: {domain}")
+    return domain
+
+
+def fetch_response(url: str, timeout: int = 5) -> tuple[int, dict[str, str], bytes]:
+    req = urllib.request.Request(url, headers={"User-Agent": "beta-ops CVE Hunter/1.0"})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return resp.status, dict(resp.headers.items()), resp.read()
+    except urllib.error.HTTPError as exc:
+        return exc.code, dict(exc.headers.items()), exc.read()
+    except Exception:
+        return 0, {}, b""
 
 
 def detect_technologies(domain, recon_dir=None):
@@ -56,8 +80,9 @@ def detect_technologies(domain, recon_dir=None):
     # Method 2: Direct httpx probe
     if not techs:
         success, output = run_cmd(
-            f'echo "{domain}" | httpx -silent -tech-detect -status-code 2>/dev/null',
+            ["httpx", "-silent", "-tech-detect", "-status-code"],
             timeout=30,
+            input_text=f"{domain}\n",
         )
         if success and output:
             tech_match = re.findall(r"\[([^\]]+)\]", output)
@@ -69,7 +94,7 @@ def detect_technologies(domain, recon_dir=None):
 
     # Method 3: Manual header analysis
     success, output = run_cmd(
-        f'curl -sI "https://{domain}" --max-time 10 2>/dev/null', timeout=15
+        ["curl", "-sI", f"https://{domain}", "--max-time", "10"], timeout=15
     )
     if success and output:
         headers = output.lower()
@@ -123,7 +148,17 @@ def detect_technologies(domain, recon_dir=None):
 
     for path, tech in fingerprints.items():
         success, output = run_cmd(
-            f'curl -s -o /dev/null -w "%{{http_code}}" "https://{domain}{path}" --max-time 5',
+            [
+                "curl",
+                "-s",
+                "-o",
+                "/dev/null",
+                "-w",
+                "%{http_code}",
+                f"https://{domain}{path}",
+                "--max-time",
+                "5",
+            ],
             timeout=10,
         )
         if success and output in ("200", "301", "302", "403"):
@@ -151,7 +186,13 @@ def search_cves(tech_name, max_results=10):
     print(f"    [>] Searching CVEs for: {tech_name}...")
     try:
         success, output = run_cmd(
-            f'curl -s "https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch={encoded_term}&resultsPerPage={max_results}" --max-time 15',
+            [
+                "curl",
+                "-s",
+                f"https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch={encoded_term}&resultsPerPage={max_results}",
+                "--max-time",
+                "15",
+            ],
             timeout=20,
         )
         if success and output:
@@ -195,7 +236,13 @@ def search_cves(tech_name, max_results=10):
     if not cves:
         try:
             success, output = run_cmd(
-                f'curl -s "https://cve.circl.lu/api/search/{encoded_term}" --max-time 15',
+                [
+                    "curl",
+                    "-s",
+                    f"https://cve.circl.lu/api/search/{encoded_term}",
+                    "--max-time",
+                    "15",
+                ],
                 timeout=20,
             )
             if success and output:
@@ -234,11 +281,25 @@ def run_nuclei_cve_scan(domain, recon_dir=None):
             targets_file = live_file
 
     if targets_file:
-        cmd = f'cat "{targets_file}" | nuclei -tags cve -severity medium,high,critical -silent -rate-limit 30 2>/dev/null'
+        with open(targets_file, encoding="utf-8", errors="replace") as handle:
+            targets_input = handle.read()
     else:
-        cmd = f'echo "https://{domain}" | nuclei -tags cve -severity medium,high,critical -silent -rate-limit 30 2>/dev/null'
+        targets_input = f"https://{domain}\n"
 
-    success, output = run_cmd(cmd, timeout=300)
+    success, output = run_cmd(
+        [
+            "nuclei",
+            "-tags",
+            "cve",
+            "-severity",
+            "medium,high,critical",
+            "-silent",
+            "-rate-limit",
+            "30",
+        ],
+        timeout=300,
+        input_text=targets_input,
+    )
 
     findings = []
     if success and output:
@@ -281,21 +342,19 @@ def check_exposed_configs(domain, recon_dir=None):
     for host in hosts:
         for path in config_paths:
             url = f"{host}{path}"
-            success, output = run_cmd(
-                f'curl -s -o /tmp/cfg_check.txt -w "%{{http_code}}" --max-time 5 "{url}"',
-                timeout=10,
-            )
-            if success and output.strip() == "200":
-                # Verify it's not an HTML error page
-                _, content = run_cmd("file /tmp/cfg_check.txt", timeout=5)
-                _, head = run_cmd("head -1 /tmp/cfg_check.txt", timeout=5)
-                if (
-                    "HTML" not in content
-                    and "<!DOCTYPE" not in head
-                    and "<html" not in head.lower()
-                ):
-                    exposed.append(url)
-                    print(f"    [VULN] Config exposed: {url}")
+            status, headers, body = fetch_response(url, timeout=5)
+            if status != 200 or not body:
+                continue
+
+            content_type = headers.get("Content-Type", "").lower()
+            body_head = body[:512].decode("utf-8", errors="replace").lstrip()
+            if "text/html" in content_type:
+                continue
+            if body_head.startswith("<!DOCTYPE") or body_head.lower().startswith("<html"):
+                continue
+
+            exposed.append(url)
+            print(f"    [VULN] Config exposed: {url}")
 
     if not exposed:
         print("    [+] No exposed config files found")
@@ -405,6 +464,8 @@ def main():
 
     if recon_dir and not domain:
         domain = os.path.basename(os.path.normpath(recon_dir))
+
+    domain = validate_domain(domain)
 
     if not recon_dir and domain:
         potential = os.path.join(BASE_DIR, "recon", domain)

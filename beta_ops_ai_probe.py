@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Hai API Probe — Fingerprint HackerOne's AI Copilot
-Usage: python3 bbagent_ai_probe.py --token YOUR_API_TOKEN --api-name YOUR_API_NAME
+Usage: python3 beta_ops_ai_probe.py --token YOUR_API_TOKEN --api-name YOUR_API_NAME
 """
 
 import argparse

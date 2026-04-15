@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-bbagent_validate.py — Interactive bug validation assistant.
+beta_ops_validate.py — Interactive bug validation assistant.
 Walks through the 4 validation gates, checks for duplicates, calculates CVSS,
 and generates a skeleton HackerOne report.
 
 Usage:
-  python3 ./bbagent_validate.py
-  python3 ./bbagent_validate.py --output findings/myreport.md
+  python3 ./beta_ops_validate.py
+  python3 ./beta_ops_validate.py --output findings/myreport.md
 """
 
 import argparse
@@ -18,7 +18,7 @@ import urllib.request
 import urllib.error
 from datetime import datetime
 
-from bbagent_paths import repo_path
+from beta_ops_paths import repo_path
 
 # macOS: Python may not have system SSL certs. Use unverified context for API queries.
 _SSL_CTX = ssl.create_default_context()

@@ -1,5 +1,5 @@
 ---
-description: Prepare or run an autonomous BBAgent mission with explicit scope, stop conditions, and evidence gating. Usage: /mission target.com
+description: Prepare or run an autonomous beta-ops mission with explicit scope, stop conditions, and evidence gating. Usage: /mission target.com
 ---
 
 # /mission
@@ -11,7 +11,7 @@ Run the repository like an autonomous mission system instead of a loose tool bun
 1. Confirms explicit scope input exists
 2. Chooses the minimum autonomous plan for the target
 3. Writes or references a scope file
-4. Runs `bbagent_autonomous.py` or prepares the exact command
+4. Runs `beta_ops_autonomous.py` or prepares the exact command
 5. Forces the result back through `screen` or `gate`
 
 ## Required Inputs
@@ -33,7 +33,7 @@ If scope is ambiguous:
 ## Recommended Run
 
 ```bash
-python3 bbagent_autonomous.py \
+python3 beta_ops_autonomous.py \
   --target target.com \
   --scope-file scope/target.json \
   --mission-name target-main \

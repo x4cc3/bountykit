@@ -2,7 +2,7 @@
 # =============================================================================
 # Enhanced Recon Engine
 # Full reconnaissance pipeline for bug bounty targets
-# Usage: ./bbagent_recon.sh <target-domain> [--quick]
+# Usage: ./beta_ops_recon.sh <target-domain> [--quick]
 # =============================================================================
 
 set -euo pipefail
@@ -275,7 +275,7 @@ if command -v ffuf &>/dev/null && [ -s "$RECON_DIR/live/urls.txt" ]; then
 
         log_done "Directory fuzzing complete ($FUZZ_COUNT hosts)"
     else
-        log_warn "No wordlist found — run: python3 ./bbagent_hunt.py --setup-wordlists"
+        log_warn "No wordlist found — run: python3 ./beta_ops_hunt.py --setup-wordlists"
     fi
 else
     log_warn "ffuf not installed or no live hosts — skipping directory fuzzing"

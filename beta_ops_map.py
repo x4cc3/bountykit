@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-bbagent_map.py — Generates a Mermaid mind map + prioritized hunting checklist
+beta_ops_map.py — Generates a Mermaid mind map + prioritized hunting checklist
 based on target type and detected technologies.
 
 Usage:
-  python3 ./bbagent_map.py --target target.com --type opensrc --tech "nextjs,graphql,solidity"
-  python3 ./bbagent_map.py --target example.com --type website --tech "nginx,react"
-  python3 ./bbagent_map.py --target api.example.com --type api --tech "jwt,openapi"
+  python3 ./beta_ops_map.py --target target.com --type opensrc --tech "nextjs,graphql,solidity"
+  python3 ./beta_ops_map.py --target example.com --type website --tech "nginx,react"
+  python3 ./beta_ops_map.py --target api.example.com --type api --tech "jwt,openapi"
 """
 
 import argparse
@@ -14,7 +14,7 @@ import os
 import sys
 from datetime import datetime
 
-from bbagent_paths import repo_path
+from beta_ops_paths import repo_path
 
 # ─── Color codes ──────────────────────────────────────────────────────────────
 RED = "\033[91m"

@@ -41,7 +41,7 @@ Example `metadata.json`:
 
 ## Lifecycle Behavior
 
-`bbagent_lifecycle.py` now scores actual packs instead of category names alone.
+`beta_ops_lifecycle.py` now scores actual packs instead of category names alone.
 
 - missing `scope`, `request`, or `response` -> `KILL`
 - complete pack with strong bug class -> `PASS`

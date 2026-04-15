@@ -1,9 +1,9 @@
 ---
-name: bbagent-router
-description: Entry skill for the BBAgent repository. Routes work to the right track, playbook, and role based on whether the task is scope checking, recon, active hunting, validation, reporting, exploit chaining, or smart contract review.
+name: beta-ops-router
+description: Entry skill for the beta-ops repository. Routes work to the right track, playbook, and role based on whether the task is scope checking, recon, active hunting, validation, reporting, exploit chaining, or smart contract review.
 ---
 
-# BBAgent Router
+# beta-ops Router
 
 This file is the short entrypoint for the repository.
 

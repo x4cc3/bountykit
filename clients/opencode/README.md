@@ -1,11 +1,11 @@
 # Opencode Setup
 
-Use BBAgent in Opencode with one primary agent and explicit slash commands.
+Use beta-ops in Opencode with one primary agent and explicit slash commands.
 
 ## Files
 
 - Config template: [opencode.example.json](./opencode.example.json)
-- Rendered local example after bootstrap: `~/.config/opencode/opencode-bbagent.example.json`
+- Rendered local example after bootstrap: `~/.config/opencode/opencode-beta-ops.example.json`
 - Your live config: `~/.config/opencode/opencode.json`
 
 ## Install
@@ -19,7 +19,7 @@ From the repo root:
 That writes a rendered example file with absolute paths to:
 
 ```bash
-~/.config/opencode/opencode-bbagent.example.json
+~/.config/opencode/opencode-beta-ops.example.json
 ```
 
 Merge these sections from the rendered example into your live Opencode config:
@@ -31,15 +31,15 @@ Merge these sections from the rendered example into your live Opencode config:
 
 ## Default Entry Point
 
-Set BBAgent as the default Opencode agent:
+Set beta-ops as the default Opencode agent:
 
 ```json
 {
-  "default_agent": "bbagent"
+  "default_agent": "beta-ops"
 }
 ```
 
-The `bbagent` agent is the main bug bounty operator. Start there unless you already know you only want a narrower lane like recon or report writing.
+The `beta-ops` agent is the main bug bounty operator. Start there unless you already know you only want a narrower lane like recon or report writing.
 
 ## Model Selection
 
@@ -64,7 +64,7 @@ Set `model` on that agent:
 ```json
 {
   "agent": {
-    "bbagent": {
+    "beta-ops": {
       "model": "openai/gpt-5.4"
     },
     "verdict_engine": {
@@ -76,7 +76,7 @@ Set `model` on that agent:
 
 This is useful when you want:
 
-- a stronger general model for `bbagent`
+- a stronger general model for `beta-ops`
 - a cheaper or faster model for narrow roles
 - a different provider for a specific lane
 
@@ -87,7 +87,7 @@ Opencode also supports an agent-level `variant` field:
 ```json
 {
   "agent": {
-    "bbagent": {
+    "beta-ops": {
       "model": "openai/gpt-5.4",
       "variant": "fast"
     }
@@ -102,13 +102,13 @@ Use `variant` only if your provider/model supports variants.
 You can override both the agent and model per run:
 
 ```bash
-opencode --agent bbagent --model openai/gpt-5.4
+opencode --agent beta-ops --model openai/gpt-5.4
 ```
 
 Examples:
 
 ```bash
-opencode --agent bbagent
+opencode --agent beta-ops
 opencode --agent verdict_engine --model openai/gpt-5.4
 opencode --agent surface_cartographer --model anthropic/claude-sonnet-4
 ```
@@ -119,7 +119,7 @@ This is the simplest pattern:
 
 ```json
 {
-  "default_agent": "bbagent",
+  "default_agent": "beta-ops",
   "model": "openai/gpt-5.4"
 }
 ```
@@ -130,8 +130,8 @@ Then add agent-specific `model` overrides only if you have a reason.
 
 For normal bug bounty work:
 
-- use the `bbagent` agent
-- or run the `/bbagent` command
+- use the `beta-ops` agent
+- or run the `/beta-ops` command
 
 Use narrower commands only when you already know the task:
 
@@ -149,10 +149,10 @@ Useful checks:
 ```bash
 opencode debug config
 opencode debug skill
-opencode debug agent bbagent
+opencode debug agent beta-ops
 ```
 
-If your skills are installed correctly, `opencode debug skill` should list the BBAgent tracks from this repo.
+If your skills are installed correctly, `opencode debug skill` should list the beta-ops tracks from this repo.
 
 ## Autonomous Missions
 
@@ -161,7 +161,7 @@ Use `/mission` when you want a long-running, scope-first autonomous workflow.
 The repo also ships a direct runner:
 
 ```bash
-python3 bbagent_autonomous.py --target target.com --scope-file scope/target.json --quick
+python3 beta_ops_autonomous.py --target target.com --scope-file scope/target.json --quick
 ```
 
 That writes mission state under `missions/` and lifecycle decisions under `findings/<target>/autonomous_verdict.*`.
@@ -169,7 +169,7 @@ That writes mission state under `missions/` and lifecycle decisions under `findi
 To generate `scope/target.json` from a program page or pasted scope file:
 
 ```bash
-python3 bbagent_scope.py --csv hackerone-scope.csv
-python3 bbagent_scope.py --url "https://hackerone.com/example"
-python3 bbagent_scope.py --text-file scope-policy.txt
+python3 beta_ops_scope.py --csv hackerone-scope.csv
+python3 beta_ops_scope.py --url "https://hackerone.com/example"
+python3 beta_ops_scope.py --text-file scope-policy.txt
 ```

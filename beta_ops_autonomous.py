@@ -6,9 +6,9 @@ import os
 import re
 from datetime import UTC, datetime
 
-import bbagent_hunt
-from bbagent_lifecycle import evaluate_target, write_outputs
-from bbagent_paths import repo_path
+import beta_ops_hunt
+from beta_ops_lifecycle import evaluate_target, write_outputs
+from beta_ops_paths import repo_path
 
 
 MISSIONS_ROOT = repo_path("missions")
@@ -43,7 +43,7 @@ def update_state(state_path: str, state: dict) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Autonomous mission runner for BBAgent"
+        description="Autonomous mission runner for beta-ops"
     )
     parser.add_argument("--target", required=True, help="In-scope target domain")
     parser.add_argument(
@@ -91,7 +91,7 @@ def main() -> None:
     state["phase"] = "survey"
     update_state(state_path, state)
 
-    recon_ok = bbagent_hunt.run_recon(args.target, quick=args.quick)
+    recon_ok = beta_ops_hunt.run_recon(args.target, quick=args.quick)
     state["recon_ok"] = recon_ok
     if not recon_ok:
         state["decision"] = "ROTATE"
@@ -103,18 +103,18 @@ def main() -> None:
     state["phase"] = "probe"
     update_state(state_path, state)
 
-    scan_ok = bbagent_hunt.run_vuln_scan(args.target, quick=args.quick)
+    scan_ok = beta_ops_hunt.run_vuln_scan(args.target, quick=args.quick)
     state["scan_ok"] = scan_ok
 
     if args.cve_hunt:
         state["phase"] = "probe:cve"
         update_state(state_path, state)
-        state["cve_ok"] = bbagent_hunt.run_cve_hunt(args.target)
+        state["cve_ok"] = beta_ops_hunt.run_cve_hunt(args.target)
 
     if args.zero_day:
         state["phase"] = "probe:zero-day"
         update_state(state_path, state)
-        state["zero_day_ok"] = bbagent_hunt.run_zero_day_fuzzer(
+        state["zero_day_ok"] = beta_ops_hunt.run_zero_day_fuzzer(
             args.target, deep=not args.quick
         )
 
@@ -127,7 +127,7 @@ def main() -> None:
 
     if verdict["decision"] == "PASS":
         state["phase"] = "brief"
-        state["reports_generated"] = bbagent_hunt.generate_reports(args.target)
+        state["reports_generated"] = beta_ops_hunt.generate_reports(args.target)
         state["decision"] = "REPORT READY"
     elif verdict["decision"] in {"CHAIN REQUIRED", "DOWNGRADE"}:
         state["decision"] = verdict["decision"]

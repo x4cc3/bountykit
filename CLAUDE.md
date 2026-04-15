@@ -1,6 +1,6 @@
-# BBAgent — Claude Guide
+# beta-ops — Claude Guide
 
-This file is the Claude-specific doorway into the BBAgent layout.
+This file is the Claude-specific doorway into the beta-ops layout.
 
 ## Install
 
@@ -50,15 +50,15 @@ chmod +x bootstrap.sh
 
 ## Direct Tools
 
-- `bbagent_hunt.py`
-- `bbagent_recon.sh`
-- `bbagent_learn.py`
-- `bbagent_map.py`
-- `bbagent_validate.py`
-- `bbagent_report.py`
-- `bbagent_scope.py`
-- `bbagent_lifecycle.py`
-- `bbagent_autonomous.py`
+- `beta_ops_hunt.py`
+- `beta_ops_recon.sh`
+- `beta_ops_learn.py`
+- `beta_ops_map.py`
+- `beta_ops_validate.py`
+- `beta_ops_report.py`
+- `beta_ops_scope.py`
+- `beta_ops_lifecycle.py`
+- `beta_ops_autonomous.py`
 
 Use `control-room` as the default entrypoint. Switch to the narrower role only when the task is clearly bounded.
 

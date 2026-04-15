@@ -10,7 +10,7 @@ import urllib.request
 from datetime import UTC, datetime
 from html import unescape
 
-from bbagent_paths import repo_path
+from beta_ops_paths import repo_path
 
 
 SCOPE_ROOT = repo_path("scope")
@@ -40,7 +40,7 @@ def slugify(value: str) -> str:
 
 def fetch_url(url: str) -> str:
     req = urllib.request.Request(
-        url, headers={"User-Agent": "BBAgent Scope Ingestor/1.0"}
+        url, headers={"User-Agent": "beta-ops Scope Ingestor/1.0"}
     )
     with urllib.request.urlopen(req, timeout=30, context=TLS_CONTEXT) as resp:
         return resp.read().decode("utf-8", errors="replace")

@@ -4,9 +4,9 @@ HackerOne Report Generator
 Generates formatted bug bounty reports from scan findings.
 
 Usage:
-    python3 bbagent_report.py <findings_dir>
-    python3 bbagent_report.py --finding <finding_file> --type <vuln_type>
-    python3 bbagent_report.py --manual --type xss --url <url> --param <param>
+    python3 beta_ops_report.py <findings_dir>
+    python3 beta_ops_report.py --finding <finding_file> --type <vuln_type>
+    python3 beta_ops_report.py --manual --type xss --url <url> --param <param>
 """
 
 import argparse
@@ -16,7 +16,7 @@ import re
 import sys
 from datetime import datetime
 
-from bbagent_paths import repo_path
+from beta_ops_paths import repo_path
 
 BASE_DIR = repo_path()
 REPORTS_DIR = repo_path("reports")
@@ -580,9 +580,9 @@ def main():
 
     if not args.findings_dir:
         print("[-] Please provide a findings directory or use --manual mode")
-        print("    Usage: python3 bbagent_report.py <findings_dir>")
+        print("    Usage: python3 beta_ops_report.py <findings_dir>")
         print(
-            "    Usage: python3 bbagent_report.py --manual --type xss --url https://example.com/search?q=test"
+            "    Usage: python3 beta_ops_report.py --manual --type xss --url https://example.com/search?q=test"
         )
         sys.exit(1)
 

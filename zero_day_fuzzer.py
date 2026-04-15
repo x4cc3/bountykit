@@ -19,18 +19,17 @@ Usage:
 """
 
 import argparse
+import hashlib
 import json
 import os
 import re
-import shlex
 import subprocess
 import sys
 import time
-import hashlib
 from datetime import datetime
-from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
-from bbagent_paths import repo_path
+from beta_ops_paths import repo_path
 
 BASE_DIR = repo_path()
 FINDINGS_DIR = repo_path("findings")
@@ -38,9 +37,7 @@ FINDINGS_DIR = repo_path("findings")
 
 def run_cmd(cmd, timeout=15):
     try:
-        result = subprocess.run(
-            cmd, shell=True, capture_output=True, text=True, timeout=timeout
-        )
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
         return result.returncode == 0, result.stdout, result.stderr
     except subprocess.TimeoutExpired:
         return False, "", "timeout"
@@ -57,15 +54,14 @@ def curl_request(url, method="GET", headers=None, data=None, timeout=10):
 
     if headers:
         for k, v in headers.items():
-            cmd_parts.extend(["-H", shlex.quote(f"{k}: {v}")])
+            cmd_parts.extend(["-H", f"{k}: {v}"])
 
     if data:
-        cmd_parts.extend(["-d", shlex.quote(data)])
+        cmd_parts.extend(["-d", data])
 
-    cmd_parts.append(shlex.quote(url))
-    cmd = " ".join(cmd_parts)
+    cmd_parts.append(url)
 
-    success, stdout, stderr = run_cmd(cmd, timeout=timeout + 5)
+    success, stdout, stderr = run_cmd(cmd_parts, timeout=timeout + 5)
 
     if not success or not stdout:
         return None, None, None
@@ -363,7 +359,7 @@ class ZeroDayFuzzer:
             for payload in payloads[:3]:  # Test top 3 payloads per param
                 url = f"{base_url}/?{param}={payload}"
                 # Use curl with -L to follow redirects but capture all headers
-                cmd = f'curl -sI -D- --max-time 10 "{url}" 2>/dev/null'
+                cmd = ["curl", "-sI", "-D-", "--max-time", "10", url]
                 success, stdout, _ = run_cmd(cmd, timeout=15)
                 if success and stdout:
                     location = re.search(r"location:\s*(.+)", stdout, re.I)
