@@ -21,11 +21,13 @@ Use this repository as an operations pack, not as a monolithic skill dump.
 ## Recommended Loop
 
 1. Run `boundary` before touching an asset.
-2. Use `survey` to build a target map.
-3. Use `probe` for one bug class or one feature at a time.
-4. Use `screen` or `gate` before writing anything.
-5. Use `pivot` only when the finding needs stronger impact.
-6. Use `brief` after the evidence is real and reproducible.
+2. Use `intel` for CVE and tech stack intelligence.
+3. Use `survey` to build a target map.
+4. Use `probe` for one bug class or one feature at a time.
+5. Use `screen` or `gate` before writing anything.
+6. Use `pivot` only when the finding needs stronger impact.
+7. Use `brief` after the evidence is real and reproducible.
+8. Use `recall` to pull previous session data before resuming.
 
 ## Track Selection
 

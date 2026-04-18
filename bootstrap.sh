@@ -53,6 +53,14 @@ install_claude() {
         echo "✓ Installed playbook: ${playbook_name}"
     done
 
+    # Install MCP server configs if Claude config exists
+    local claude_config="${HOME}/.claude/config.json"
+    if [ -f "$claude_config" ]; then
+        echo "MCP configs available in mcp/mcp-config.json — merge into ${claude_config} manually."
+    else
+        echo "Note: MCP configs available in mcp/mcp-config.json for Burp Suite and HackerOne integration."
+    fi
+
     echo "Claude tracks installed to ${skills_dir}"
     echo "Claude playbooks installed to ${commands_dir}"
 }

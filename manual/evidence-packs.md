@@ -43,9 +43,9 @@ Example `metadata.json`:
 
 `beta_ops_lifecycle.py` now scores actual packs instead of category names alone.
 
-- missing `scope`, `request`, or `response` -> `KILL`
-- complete pack with strong bug class -> `PASS`
-- partial pack -> `DOWNGRADE`
+- missing any required proof for the bug class -> `KILL`
+- strong classes can pass only when their required proof is complete
+- noisy classes stay fail-closed unless impact and control evidence are present
 - chain-prone classes without impact -> `CHAIN REQUIRED`
 
 That means the autonomous layer is now judging proof quality, not just file names.

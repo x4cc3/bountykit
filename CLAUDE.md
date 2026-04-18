@@ -38,6 +38,11 @@ chmod +x bootstrap.sh
 - `/brief`
 - `/boundary`
 - `/contract-sweep`
+- `/recall` — Pull up hunt memory for a target or bug class
+- `/intel` — CVE + disclosure intelligence before hunting
+- `/cicd-scan` — Scan CI/CD pipelines for security issues
+- `/pickup` — Resume a previous hunt session
+- `/autopilot` — Full autonomous hunt loop
 
 ## Roles
 
@@ -59,6 +64,16 @@ chmod +x bootstrap.sh
 - `beta_ops_scope.py`
 - `beta_ops_lifecycle.py`
 - `beta_ops_autonomous.py`
+- `beta_ops_memory.py` — Cross-session hunt memory (save/recall findings, techniques, patterns)
+- `beta_ops_intel.py` — CVE + disclosure intelligence engine
+- `beta_ops_cicd.py` — CI/CD pipeline security scanner
+
+## MCP Integrations
+
+- `mcp/burp_mcp.py` — Burp Suite proxy history, site map, scan issues
+- `mcp/hackerone_mcp.py` — HackerOne program scope, hacktivity, weaknesses
+
+See `mcp/README.md` for setup instructions.
 
 Use `control-room` as the default entrypoint. Switch to the narrower role only when the task is clearly bounded.
 

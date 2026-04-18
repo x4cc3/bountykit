@@ -20,6 +20,55 @@ EVIDENCE_FILES = {
 }
 CHAIN_CLASSES = {"ssrf", "redirect", "open_redirect", "cors", "clickjacking"}
 PASS_CLASSES = {"idor", "auth_bypass", "authz", "access_control", "exposure"}
+HIGH_NOISE_CLASSES = {
+    "xss",
+    "sqli",
+    "graphql",
+    "graphql_auth",
+    "oauth",
+    "oidc",
+    "csrf",
+    "file_upload",
+    "ai",
+    "prompt_injection",
+    "subdomain_takeover",
+}
+
+
+def normalize_bug_class(value: str) -> str:
+    bug_class = (value or "unknown").strip().lower().replace("-", "_")
+    aliases = {
+        "bola": "idor",
+        "broken_object_level_authorization": "idor",
+        "access control": "access_control",
+        "auth bypass": "auth_bypass",
+        "authorization": "authz",
+        "open redirect": "open_redirect",
+        "graphql auth": "graphql_auth",
+        "prompt injection": "prompt_injection",
+        "file upload": "file_upload",
+        "subdomain takeover": "subdomain_takeover",
+    }
+    return aliases.get(bug_class, bug_class)
+
+
+def get_required_evidence_keys(bug_class: str) -> set[str]:
+    required = {"scope", "request", "response"}
+
+    if bug_class in PASS_CLASSES or bug_class in HIGH_NOISE_CLASSES:
+        required.add("victim")
+
+    if bug_class in HIGH_NOISE_CLASSES:
+        required.add("impact")
+
+    if bug_class in {"idor", "auth_bypass", "authz", "access_control", "csrf"}:
+        required.add("negative_control")
+
+    return required
+
+
+def get_missing_keys(checks: dict[str, bool], required_keys: set[str]) -> list[str]:
+    return sorted(name for name in required_keys if not checks.get(name, False))
 
 
 def utcnow() -> str:
@@ -66,7 +115,7 @@ def collect_evidence_pack(pack_dir: str) -> dict:
 def score_pack(pack: dict) -> dict:
     evidence = pack["evidence"]
     metadata = pack["metadata"]
-    bug_class = str(metadata.get("bug_class", pack["name"])).lower()
+    bug_class = normalize_bug_class(str(metadata.get("bug_class", pack["name"])))
 
     checks = {
         "scope": bool(evidence["scope"]),
@@ -77,14 +126,20 @@ def score_pack(pack: dict) -> dict:
         "impact": bool(evidence["impact"]),
     }
     score = sum(1 for passed in checks.values() if passed)
+    required_keys = get_required_evidence_keys(bug_class)
+    missing_required = get_missing_keys(checks, required_keys)
 
-    if not checks["request"] or not checks["response"] or not checks["scope"]:
+    if missing_required:
         decision = "KILL"
-        reason = "Missing core evidence: scope, request, or response"
+        reason = f"Missing required proof for {bug_class}: {', '.join(missing_required)}"
         confidence = "LOW"
     elif bug_class in CHAIN_CLASSES and not checks["impact"]:
         decision = "CHAIN REQUIRED"
         reason = "Bug class usually needs stronger impact proof"
+        confidence = "MEDIUM"
+    elif bug_class in HIGH_NOISE_CLASSES and not checks["negative_control"]:
+        decision = "DOWNGRADE"
+        reason = "High-noise bug class still needs a negative control for a final pass"
         confidence = "MEDIUM"
     elif score >= 6:
         decision = "PASS"
@@ -109,6 +164,8 @@ def score_pack(pack: dict) -> dict:
         "path": pack["path"],
         "bug_class": bug_class,
         "checks": checks,
+        "required_checks": sorted(required_keys),
+        "missing_required": missing_required,
         "score": score,
         "decision": decision,
         "confidence": confidence,
@@ -226,6 +283,10 @@ def write_outputs(target: str, result: dict) -> tuple[str, str]:
                 f"{name}={'yes' if ok else 'no'}" for name, ok in pack["checks"].items()
             )
             lines.append(f"  - checks: {checks}")
+        if pack.get("missing_required"):
+            lines.append(
+                f"  - missing required: {', '.join(pack['missing_required'])}"
+            )
 
     with open(md_path, "w", encoding="utf-8") as handle:
         handle.write("\n".join(lines) + "\n")

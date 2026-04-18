@@ -36,7 +36,7 @@ Every autonomous run should have a scope file like:
 }
 ```
 
-The target must match `in_scope_domains` exactly or by wildcard suffix. If it does not, the runner exits before any recon.
+The target must match `in_scope_domains` exactly or by wildcard suffix and must not match an explicit `out_of_scope` entry. If it does not pass both checks, the runner exits before any recon.
 
 ## Artifacts
 
@@ -52,9 +52,9 @@ For best results, store candidate findings as structured evidence packs describe
 
 `beta_ops_lifecycle.py` now prefers actual evidence packs over category names alone.
 
-- `scope`, `request`, and `response` are mandatory for survival
-- complete packs can advance to `PASS`
-- partial packs become `DOWNGRADE`
+- required proof is bug-class aware and fail-closed
+- `scope`, `request`, and `response` are always mandatory
+- stronger or noisy classes also require victim/object proof, impact proof, and sometimes a negative control before promotion
 - chain-prone classes without impact become `CHAIN REQUIRED`
 
 This is still not a replacement for full `/gate`, but it is much closer to proof-driven unattended triage.

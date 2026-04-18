@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "burp-proxy": {
+      "command": "python3",
+      "args": ["mcp/burp_mcp.py"],
+      "description": "Read Burp Suite proxy history. Requires Burp running with REST API enabled on port 1337."
+    },
+    "hackerone": {
+      "command": "python3",
+      "args": ["mcp/hackerone_mcp.py"],
+      "description": "Query HackerOne programs, scope, and disclosed reports."
+    }
+  }
+}

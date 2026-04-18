@@ -1,109 +1,39 @@
 ---
-description: Quick 7-Question Gate triage on a finding before writing a report. Kills N/A submissions before they happen. Faster than /gate — for quick go/no-go decisions. Requires enough evidence to justify deeper validation. Usage: /screen
+description: Quick 7-Question Gate triage — fast go/no-go before full /gate. Usage: /screen
 ---
 
 # /screen
 
-Quick triage to decide: submit or kill?
-
-## When to Use
-
-Use this before spending time writing a full report. If triage passes, run `/gate` for the full 4-gate check, then `/brief`.
-
-`/screen` is not allowed to PASS a final report by itself. It only decides whether the lead is worth deeper validation.
+Quick triage. Not a final PASS — only decides if the lead is worth deeper validation.
 
 ## Usage
-
 ```
 /screen
 ```
+Describe finding in one sentence with: endpoint, request sent, what was reached.
 
-Describe the finding in one sentence. Example:
-- "I can read other users' orders by changing user_id in /api/orders/{id}"
-- "The /api/export endpoint returns 200 with data even with no auth header"
-- "I found X-Forwarded-Host is reflected in the password reset email"
+## Fast 7-Question Check
 
-Minimum input for a real GO:
-- exact endpoint or feature
-- exact request you already sent
-- what victim, object, or internal target was reached
+All from `tracks/verdict-gate/SKILL.md`. First NO = KILL.
 
-## The 7 Questions (Fast Version)
+1. Have real HTTP request RIGHT NOW?
+2. Impact type accepted by program?
+3. Asset in scope and owned by target?
+4. Works without admin/privileged access?
+5. Not already known/documented?
+6. Provable impact beyond "technically possible"?
+7. Not on never-submit list?
 
-Answer YES or NO to each. First NO = kill it immediately.
+## Fast Kill
 
-```
-Q1: Can I demonstrate this with a real HTTP request RIGHT NOW?
-    YES: I have the request/response already
-    NO: I need to look at more code first → KILL
+Kill if: admin-only + no boundary crossing | no PoC | no victim identified | scope unchecked | 3+ preconditions | missing header/flag/DMARC | SSRF DNS-only | open redirect alone | self-XSS | introspection only
 
-Q2: Is this impact type accepted by the program?
-    YES: Bug class is on their accepted list
-    NO: They explicitly exclude this type → KILL
+## Chain Override
 
-Q3: Is the vulnerable asset owned by and in scope for the program?
-    YES: Domain confirmed in-scope, not third-party
-    NO: Third-party service or excluded domain → KILL
-
-Q4: Does this work without admin/privileged access?
-    YES: Regular user account is enough
-    NO: Requires admin → KILL (99% of programs)
-
-Q5: Is this NOT already known/disclosed/documented behavior?
-    YES: Not in changelogs, not in disclosed reports
-    NO: It's documented as intended → KILL
-
-Q6: Can I prove impact beyond "technically possible"?
-    YES: I have actual data in the response / action completed
-    NO: I only have a 200 status or error message → DOWNGRADE
-
-Q7: Is this NOT on the never-submit list?
-    YES: It's a real bug class
-    NO: Missing headers, self-XSS, open redirect alone, etc. → KILL or CHAIN
-```
-
-## Fast Kill Checklist
-
-Kill immediately if ANY of these are true:
-```
-[ ] "Admin can do X" with no reachable privilege boundary
-[ ] "Could theoretically lead to..." = no PoC = not a bug
-[ ] No exact request yet
-[ ] No victim, object, or internal target identified
-[ ] Scope is still assumed rather than checked
-[ ] Bug requires 3+ preconditions simultaneously
-[ ] Finding is a missing header, missing flag, missing DMARC
-[ ] SSRF with DNS callback only, no data returned
-[ ] Open redirect with no OAuth chain or ATO path
-[ ] Self-XSS (only affects your own account)
-[ ] Introspection only (no IDOR, no auth bypass shown)
-[ ] Rate limit on login/contact/search (Cloudflare covers it)
-```
-
-## Conditional Kill (chain required)
-
-If it's on the never-submit list BUT you can chain it:
-```
-Open redirect → OAuth code theft → ATO        = report the chain
-SSRF DNS → internal service access = data     = report the chain
-CORS → credentialed data exfil PoC            = report the chain
-Prompt injection → IDOR via chatbot           = report the chain
-```
-
-If you can't build the chain today → KILL IT.
+If on never-submit list but chain exists (open redirect→OAuth, SSRF→internal, CORS→exfil, prompt injection→IDOR) → report the chain.
 
 ## Output
 
-**GO:** "All 7 pass. Run /gate for full check, then /brief."
-
-Add a confidence note:
-- `GO (MEDIUM)` if the lead looks real but still needs cleaner proof
-- `GO (HIGH)` only if you already have the core evidence pack
-
-**KILL [reason]:**
-- "Q1 fails — no HTTP request yet"
-- "Q4 fails — requires admin access"
-- "Q7 fails — open redirect alone is not submittable. Chain it with OAuth theft first."
-
-**DOWNGRADE:**
-- "Q6 — you have 200 status but not actual other-user data. Reproduce with two accounts and show victim's PII in the response before reporting."
+- **GO (HIGH/MEDIUM):** "All 7 pass. Run `/gate` → `/brief`."
+- **KILL [Q#]:** "[reason]"
+- **DOWNGRADE:** "Q6 — needs actual victim data, not just 200 status."

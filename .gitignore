@@ -29,3 +29,5 @@ venv/
 # Tool output
 *.out
 nmap-output/
+missions/
+hunt-memory/
