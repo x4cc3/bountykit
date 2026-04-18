@@ -12,23 +12,11 @@ Usage:
 import argparse
 import json
 import os
-import ssl
 import sys
 import urllib.request
-import urllib.error
 from datetime import datetime
 
-from beta_ops_paths import repo_path
-
-# macOS: Python may not have system SSL certs. Use unverified context for API queries.
-_SSL_CTX = ssl.create_default_context()
-try:
-    import certifi
-
-    _SSL_CTX = ssl.create_default_context(cafile=certifi.where())
-except ImportError:
-    _SSL_CTX.check_hostname = False
-    _SSL_CTX.verify_mode = ssl.CERT_NONE
+from beta_ops_paths import get_ssl_context, repo_path
 
 # ─── Color codes ──────────────────────────────────────────────────────────────
 RED = "\033[91m"
@@ -113,6 +101,11 @@ def check_h1_dups(program_handle: str, vuln_keyword: str) -> list[dict]:
     if not program_handle:
         return []
 
+    try:
+        ssl_ctx = get_ssl_context()
+    except RuntimeError:
+        return []
+
     query = {
         "query": f"""{{
           hacktivity_items(
@@ -143,7 +136,7 @@ def check_h1_dups(program_handle: str, vuln_keyword: str) -> list[dict]:
             data=json.dumps(query).encode(),
             headers={"Content-Type": "application/json"},
         )
-        with urllib.request.urlopen(req, timeout=10, context=_SSL_CTX) as resp:
+        with urllib.request.urlopen(req, timeout=10, context=ssl_ctx) as resp:
             data = json.loads(resp.read().decode())
         nodes = (data.get("data") or {}).get("hacktivity_items", {}).get("nodes", [])
         results = []
@@ -257,6 +250,7 @@ def gate2_in_scope(program_handle: str) -> tuple[bool, dict]:
     if program_handle:
         print(f"\n  {DIM}Checking HackerOne scope for '{program_handle}'...{RESET}")
         try:
+            ssl_ctx = get_ssl_context()
             query = {
                 "query": f'{{ team(handle: "{program_handle}") {{ policy_scopes(archived: false) {{ edges {{ node {{ asset_type asset_identifier eligible_for_bounty }} }} }} }} }}'
             }
@@ -265,7 +259,7 @@ def gate2_in_scope(program_handle: str) -> tuple[bool, dict]:
                 data=json.dumps(query).encode(),
                 headers={"Content-Type": "application/json"},
             )
-            with urllib.request.urlopen(req, timeout=8, context=_SSL_CTX) as resp:
+            with urllib.request.urlopen(req, timeout=8, context=ssl_ctx) as resp:
                 data = json.loads(resp.read().decode())
             scopes = (
                 (data.get("data") or {})
@@ -596,6 +590,12 @@ def main():
     print(f"{BOLD}{CYAN}{'═' * 60}{RESET}")
     print(f"\nThis will walk you through the 4 validation gates,")
     print(f"calculate your CVSS score, and generate a report skeleton.\n")
+
+    try:
+        get_ssl_context()
+    except RuntimeError as exc:
+        print(f"{RED}ERROR: {exc}{RESET}", file=sys.stderr)
+        sys.exit(1)
 
     # Collect basic info upfront
     section("Target Information")

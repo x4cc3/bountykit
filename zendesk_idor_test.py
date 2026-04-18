@@ -18,16 +18,14 @@ import json
 import requests
 from urllib.parse import urljoin
 
+__test__ = False
+
 # --- Config ---
 SUBDOMAIN = os.environ.get("ZENDESK_SUBDOMAIN", "")
 EMAIL = os.environ.get("ZENDESK_EMAIL", "")
 API_TOKEN = os.environ.get("ZENDESK_API_TOKEN", "")
 
-if not all([SUBDOMAIN, EMAIL, API_TOKEN]):
-    print("ERROR: Set ZENDESK_SUBDOMAIN, ZENDESK_EMAIL, ZENDESK_API_TOKEN env vars")
-    sys.exit(1)
-
-BASE_URL = f"https://{SUBDOMAIN}.zendesk.com"
+BASE_URL = f"https://{SUBDOMAIN}.zendesk.com" if SUBDOMAIN else ""
 AUTH = (f"{EMAIL}/token", API_TOKEN)
 
 # --- Helpers ---
@@ -290,9 +288,12 @@ def test_webhook_ssrf():
             else:
                 print(f"  [{target[:40]}] Status {r.status_code}")
 
-# === MAIN ===
-if __name__ == "__main__":
-    print(f"Zendesk IDOR/Access Control Tester")
+def main():
+    if not all([SUBDOMAIN, EMAIL, API_TOKEN]):
+        print("ERROR: Set ZENDESK_SUBDOMAIN, ZENDESK_EMAIL, ZENDESK_API_TOKEN env vars")
+        sys.exit(1)
+
+    print("Zendesk IDOR/Access Control Tester")
     print(f"Target: {BASE_URL}")
     print(f"Auth: {EMAIL}")
     print("=" * 60)
@@ -316,3 +317,8 @@ if __name__ == "__main__":
     print("\n" + "=" * 60)
     print("DONE. Review any INTERESTING or CRITICAL findings above.")
     print("Check recon/zendesk/ for any saved data.")
+
+
+# === MAIN ===
+if __name__ == "__main__":
+    main()

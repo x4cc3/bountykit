@@ -12,25 +12,14 @@ Usage:
 import argparse
 import json
 import os
-import ssl
 import sys
-import urllib.request
-import urllib.parse
 import urllib.error
+import urllib.parse
+import urllib.request
 from datetime import datetime
 from typing import Optional
 
-from beta_ops_paths import repo_path
-
-# macOS: Python may not have system SSL certs. Use unverified context for API queries.
-_SSL_CTX = ssl.create_default_context()
-try:
-    import certifi
-
-    _SSL_CTX = ssl.create_default_context(cafile=certifi.where())
-except ImportError:
-    _SSL_CTX.check_hostname = False
-    _SSL_CTX.verify_mode = ssl.CERT_NONE
+from beta_ops_paths import get_ssl_context, repo_path
 
 # ─── Color codes ──────────────────────────────────────────────────────────────
 RED = "\033[91m"
@@ -118,11 +107,15 @@ def fetch_url(
     """Simple HTTP fetch, returns parsed JSON or None on error."""
     req = urllib.request.Request(url, data=data, headers=headers or {})
     try:
-        with urllib.request.urlopen(req, timeout=timeout, context=_SSL_CTX) as resp:
+        ssl_ctx = get_ssl_context()
+        with urllib.request.urlopen(req, timeout=timeout, context=ssl_ctx) as resp:
             body = resp.read().decode("utf-8", errors="replace")
             return json.loads(body)
     except urllib.error.HTTPError as e:
         print(f"  {YELLOW}HTTP {e.code} for {url}{RESET}")
+        return None
+    except RuntimeError as e:
+        print(f"  {RED}{e}{RESET}")
         return None
     except Exception as e:
         print(f"  {YELLOW}Error fetching {url}: {e}{RESET}")
@@ -416,6 +409,12 @@ def main():
     print(f"\n{BOLD}Bug Intelligence Fetcher{RESET}")
     print(f"Technologies: {CYAN}{', '.join(techs)}{RESET}")
     print(f"Output: {output_path}\n")
+
+    try:
+        get_ssl_context()
+    except RuntimeError as exc:
+        print(f"{RED}ERROR: {exc}{RESET}", file=sys.stderr)
+        sys.exit(1)
 
     results = fetch_intel(techs)
 

@@ -14,22 +14,14 @@ Usage:
 import argparse
 import json
 import re
-import ssl
 import time
 import urllib.error
-import urllib.parse
 import urllib.request
+
+from beta_ops_paths import get_ssl_context
 
 BASE = "https://hackerone.com"
 REPORT_ID_RE = re.compile(r"^\d+$")
-
-
-def make_ctx(insecure: bool = False):
-    ctx = ssl.create_default_context()
-    if insecure:
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
-    return ctx
 
 
 def gql_string(value: str) -> str:
@@ -42,7 +34,7 @@ def validate_report_id(report_id: str) -> int:
     return int(report_id)
 
 
-def get_csrf(cookie: str, insecure: bool = False) -> str:
+def get_csrf(cookie: str) -> str:
     req = urllib.request.Request(
         BASE,
         headers={
@@ -51,7 +43,8 @@ def get_csrf(cookie: str, insecure: bool = False) -> str:
             "Accept": "text/html",
         },
     )
-    with urllib.request.urlopen(req, context=make_ctx(insecure=insecure), timeout=15) as r:
+    ssl_ctx = get_ssl_context()
+    with urllib.request.urlopen(req, context=ssl_ctx, timeout=15) as r:
         html = r.read().decode(errors="replace")
     m = re.search(r'<meta name="csrf-token" content="([^"]+)"', html)
     return m.group(1) if m else ""
@@ -62,7 +55,6 @@ def gql(
     csrf: str,
     query: str,
     variables: dict = None,
-    insecure: bool = False,
 ) -> tuple[int, dict]:
     payload = {"query": query}
     if variables:
@@ -82,9 +74,8 @@ def gql(
         method="POST",
     )
     try:
-        with urllib.request.urlopen(
-            req, context=make_ctx(insecure=insecure), timeout=15
-        ) as r:
+        ssl_ctx = get_ssl_context()
+        with urllib.request.urlopen(req, context=ssl_ctx, timeout=15) as r:
             return r.status, json.loads(r.read())
     except urllib.error.HTTPError as e:
         try:
@@ -122,30 +113,28 @@ def main():
     parser.add_argument("--cookie-b", required=True, help="Account B full cookie string")
     parser.add_argument("--report-id", required=True, help="Numeric report ID (Account A's)")
     parser.add_argument("--report-gid", required=True, help="Base64 GID of the report")
-    parser.add_argument(
-        "--insecure",
-        action="store_true",
-        help="Disable TLS certificate verification for debugging only",
-    )
     args = parser.parse_args()
 
     def gql_request(cookie: str, csrf: str, query: str, variables: dict = None):
-        return gql(cookie, csrf, query, variables, insecure=args.insecure)
+        return gql(cookie, csrf, query, variables)
 
     print("=" * 60)
     print("HackerOne Mutation IDOR Battery")
     print("=" * 60)
 
-    if args.insecure:
-        print("[!] TLS certificate verification disabled")
-
     rid = validate_report_id(args.report_id)
     gid = args.report_gid
 
+    try:
+        get_ssl_context()
+    except RuntimeError as exc:
+        print(f"ERROR: {exc}")
+        return
+
     # Get CSRF tokens
     print("\n[*] Getting CSRF tokens...")
-    csrf_a = get_csrf(args.cookie_a, insecure=args.insecure)
-    csrf_b = get_csrf(args.cookie_b, insecure=args.insecure)
+    csrf_a = get_csrf(args.cookie_a)
+    csrf_b = get_csrf(args.cookie_b)
     print(f"  A CSRF: {csrf_a[:20]}..." if csrf_a else "  A CSRF: FAILED")
     print(f"  B CSRF: {csrf_b[:20]}..." if csrf_b else "  B CSRF: FAILED")
 

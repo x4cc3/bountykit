@@ -15,32 +15,18 @@ Usage:
 
 import argparse
 import json
-import os
 import re
-import ssl
 import sys
-import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import UTC, datetime
 
-from beta_ops_paths import repo_path
+from beta_ops_paths import get_ssl_context
 
 try:
-    from beta_ops_memory import recall_target, recall_bug_class, _load_db, PATTERNS_DB
+    from beta_ops_memory import recall_target
 except ImportError:
     recall_target = None
-    recall_bug_class = None
-
-# ─── SSL ──────────────────────────────────────────────────────────────────────
-_SSL_CTX = ssl.create_default_context()
-try:
-    import certifi
-
-    _SSL_CTX = ssl.create_default_context(cafile=certifi.where())
-except ImportError:
-    _SSL_CTX.check_hostname = False
-    _SSL_CTX.verify_mode = ssl.CERT_NONE
 
 GREEN = "\033[92m"
 YELLOW = "\033[93m"
@@ -73,9 +59,13 @@ TECH_SIGNALS = {
 def fetch_url(url, headers=None, data=None, timeout=10):
     req = urllib.request.Request(url, data=data, headers=headers or {})
     try:
-        with urllib.request.urlopen(req, timeout=timeout, context=_SSL_CTX) as resp:
+        ssl_ctx = get_ssl_context()
+        with urllib.request.urlopen(req, timeout=timeout, context=ssl_ctx) as resp:
             body = resp.read().decode("utf-8", errors="replace")
             return json.loads(body) if resp.headers.get_content_type() == "application/json" else body
+    except RuntimeError as exc:
+        print(f"  {RED}{exc}{RESET}")
+        return None
     except Exception:
         return None
 
@@ -85,9 +75,10 @@ def detect_tech(target: str) -> list[str]:
     detected = []
     url = f"https://{target}"
     try:
+        ssl_ctx = get_ssl_context()
         req = urllib.request.Request(url)
         req.add_header("User-Agent", "Mozilla/5.0")
-        with urllib.request.urlopen(req, timeout=8, context=_SSL_CTX) as resp:
+        with urllib.request.urlopen(req, timeout=8, context=ssl_ctx) as resp:
             headers_str = str(resp.headers)
             body = resp.read(50_000).decode("utf-8", errors="replace")
             combined = headers_str + "\n" + body
@@ -96,6 +87,8 @@ def detect_tech(target: str) -> list[str]:
                     if re.search(pat, combined, re.IGNORECASE):
                         detected.append(tech)
                         break
+    except RuntimeError as e:
+        print(f"  {RED}Could not probe {target}: {e}{RESET}")
     except Exception as e:
         print(f"  {YELLOW}Could not probe {target}: {e}{RESET}")
 
@@ -275,6 +268,12 @@ def main():
     args = parser.parse_args()
 
     print(f"\n{BOLD}[*]{RESET} Intel gathering for {CYAN}{args.target}{RESET}...\n")
+
+    try:
+        get_ssl_context()
+    except RuntimeError as exc:
+        print(f"{RED}ERROR: {exc}{RESET}", file=sys.stderr)
+        sys.exit(1)
 
     # Detect tech
     tech = []
