@@ -17,16 +17,7 @@ This file is the short entrypoint for the repository.
 - `tracks/disclosure-lab/SKILL.md` for report writing
 - `tracks/contract-review/SKILL.md` for smart contracts
 
-## Default Execution Order
+## Workflow and Coordinator
 
-1. `playbooks/boundary.md`
-2. `playbooks/survey.md`
-3. `playbooks/probe.md`
-4. `playbooks/screen.md`
-5. `playbooks/gate.md`
-6. `playbooks/pivot.md`
-7. `playbooks/brief.md`
-
-## Default Coordinator
-
+Use [manual/workflow.md](./manual/workflow.md) for the canonical mission loop and routing.
 Start with `roles/control-room.md` unless the task is already narrow enough for a specialist role.

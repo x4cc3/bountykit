@@ -18,16 +18,10 @@ Use this repository as an operations pack, not as a monolithic skill dump.
 - `guardrails/` are mandatory rules
 - `manual/` is the cross-client operating guide
 
-## Recommended Loop
+## Workflow and Routing
 
-1. Run `boundary` before touching an asset.
-2. Use `intel` for CVE and tech stack intelligence.
-3. Use `survey` to build a target map.
-4. Use `probe` for one bug class or one feature at a time.
-5. Use `screen` or `gate` before writing anything.
-6. Use `pivot` only when the finding needs stronger impact.
-7. Use `brief` after the evidence is real and reproducible.
-8. Use `recall` to pull previous session data before resuming.
+Use [manual/workflow.md](./manual/workflow.md) as the canonical mission-loop and routing reference.
+Use `intel` when CVE or stack context matters, and use `recall` before resuming an older target.
 
 ## Track Selection
 
@@ -47,16 +41,6 @@ Use this repository as an operations pack, not as a monolithic skill dump.
 - [evidence-editor](./roles/evidence-editor.md) handles write-ups
 - [pivot-engine](./roles/pivot-engine.md) handles chaining
 - [contract-cartographer](./roles/contract-cartographer.md) handles web3 review
-
-## Explicit Routing
-
-- Start in [control-room](./roles/control-room.md) by default.
-- Hand recon and attack-surface work to [surface-cartographer](./roles/surface-cartographer.md).
-- Hand triage and validation work to [verdict-engine](./roles/verdict-engine.md).
-- Hand exploit-chain work to [pivot-engine](./roles/pivot-engine.md).
-- Hand report-writing work to [evidence-editor](./roles/evidence-editor.md) only after validation passes.
-- Hand smart contract and DeFi work to [contract-cartographer](./roles/contract-cartographer.md).
-- Do not keep specialist work in the default orchestrator when a matching specialist exists.
 
 ## Output Standard
 

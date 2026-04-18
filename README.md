@@ -34,15 +34,7 @@ For Opencode, `bootstrap.sh` renders an example config with absolute repo paths 
 
 ## Mission Loop
 
-The repository now revolves around a seven-step loop:
-
-1. `boundary` to confirm scope
-2. `survey` to map the surface
-3. `probe` to run a focused hunt
-4. `screen` for fast triage
-5. `gate` for full validation
-6. `pivot` if the finding needs escalation
-7. `brief` when the evidence is strong enough to submit
+See [manual/workflow.md](./manual/workflow.md) for the canonical mission loop, playbook order, and role routing.
 
 ## Opencode Surface
 

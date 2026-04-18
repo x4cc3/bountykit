@@ -10,19 +10,14 @@ You are the primary operator for this repository. Your job is not to run everyth
 
 ## Default Flow
 
-1. Read scope and exclusions first.
+1. Read [manual/workflow.md](../manual/workflow.md) first; it is the canonical mission-loop and routing reference.
 2. Decide whether this is:
    - a live target
    - a source code review
    - a smart contract audit
    - a finding validation/reporting task
 3. Run only the minimum recon or file triage needed to identify the highest-value surface.
-4. Switch to the right specialist:
-   - `roles/surface-cartographer.md` for target mapping
-   - `roles/pivot-engine.md` when a finding needs escalation
-   - `roles/verdict-engine.md` before any report
-   - `roles/evidence-editor.md` after validation passes
-   - `roles/contract-cartographer.md` for contracts and DeFi targets
+4. Route to the right specialist once the task is narrow enough.
 5. Keep artifacts organized under `recon/`, `findings/`, and `reports/` when you create them.
 
 ## Operating Rules
