@@ -71,7 +71,7 @@ RULES = [
         "id": "CICD-004",
         "name": "Unpinned third-party action",
         "severity": "medium",
-        "pattern": r"uses:\s+[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+@(main|master|v\d+)\b",
+        "pattern": r"uses:\s+(?!actions/|github/)[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+@(main|master|v\d+)\b",
         "description": "Third-party action referenced by mutable tag, not commit SHA",
         "cwe": "CWE-829",
     },

@@ -123,7 +123,7 @@ class ZeroDayFuzzer:
     def test_http_method_tampering(self):
         """Test for HTTP method override/tampering vulnerabilities."""
         print("\n  [>] Testing HTTP method tampering...")
-        methods = ["PUT", "DELETE", "PATCH", "OPTIONS", "TRACE", "CONNECT"]
+        methods = ["PUT", "DELETE", "PATCH", "TRACE"]
         override_headers = {
             "X-HTTP-Method-Override": "PUT",
             "X-Method-Override": "DELETE",

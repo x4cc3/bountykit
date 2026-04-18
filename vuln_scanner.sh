@@ -115,7 +115,7 @@ if command -v nuclei &>/dev/null; then
     log_step "Running nuclei XSS templates..."
     cat "$LIVE_URLS" | nuclei \
         -tags xss \
-        -severity low,medium,high,critical \
+        -severity medium,high,critical \
         -silent \
         -rate-limit "$RATE_LIMIT" \
         -concurrency "$THREADS" \
