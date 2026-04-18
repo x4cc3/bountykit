@@ -22,6 +22,12 @@ That copies the beta-ops tracks into:
 ~/.codex/skills
 ```
 
+If you want the repo's Python helpers to run with pinned packages, install them from the repo root with:
+
+```bash
+python3 -m pip install -r requirements.txt
+```
+
 Installed tracks:
 
 - `field-manual`

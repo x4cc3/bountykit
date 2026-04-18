@@ -42,38 +42,21 @@ Queries HackerOne programs, scope, and disclosed reports.
 
 ### Claude Code
 
-Add to `~/.claude/config.json`:
-```json
-{
-  "mcpServers": {
-    "burp-proxy": {
-      "command": "python3",
-      "args": ["/path/to/beta-ops/mcp/burp_mcp.py"]
-    },
-    "hackerone": {
-      "command": "python3",
-      "args": ["/path/to/beta-ops/mcp/hackerone_mcp.py"]
-    }
-  }
-}
-```
+Use [mcp-config.json](./mcp-config.json) as the source snippet and merge its `mcpServers` entries into `~/.claude/config.json`.
 
-### VS Code / Copilot
+### Other clients
 
-Add to `.vscode/mcp.json`:
-```json
-{
-  "servers": {
-    "burp-proxy": {
-      "type": "stdio",
-      "command": "python3",
-      "args": ["mcp/burp_mcp.py"]
-    },
-    "hackerone": {
-      "type": "stdio",
-      "command": "python3",
-      "args": ["mcp/hackerone_mcp.py"]
-    }
-  }
-}
+This repository currently ships a ready-to-merge MCP snippet only for Claude Code. For other clients, point them at:
+
+- `mcp/burp_mcp.py`
+- `mcp/hackerone_mcp.py`
+
+with `python3`, plus the environment variables shown above.
+
+## Python dependencies
+
+The MCP servers use only the standard library. If you also want the broader repo tooling to run with pinned packages, install them from the repo root with:
+
+```bash
+python3 -m pip install -r requirements.txt
 ```

@@ -21,20 +21,43 @@ EOF
 
 run() {
     if [ "${DRY_RUN}" = "true" ]; then
-        printf '[dry-run] %s\n' "$*"
+        printf '[dry-run]'
+        printf ' %q' "$@"
+        printf '\n'
     else
-        eval "$@"
+        "$@"
+    fi
+}
+
+render_file() {
+    local src="$1"
+    local dest="$2"
+
+    if [ "${DRY_RUN}" = "true" ]; then
+        printf '[dry-run] render %q -> %q\n' "$src" "$dest"
+    else
+        BETA_OPS_ROOT="$SCRIPT_DIR" python3 - "$src" "$dest" <<'PY'
+import os
+import sys
+from pathlib import Path
+
+src = Path(sys.argv[1])
+dest = Path(sys.argv[2])
+content = src.read_text(encoding="utf-8")
+content = content.replace("__BETA_OPS_ROOT__", os.environ["BETA_OPS_ROOT"])
+dest.write_text(content, encoding="utf-8")
+PY
     fi
 }
 
 copy_tracks() {
     local dest_root="$1"
-    run "mkdir -p \"$dest_root\""
+    run mkdir -p "$dest_root"
     for track_dir in "$SCRIPT_DIR"/tracks/*/; do
         local track_name
         track_name=$(basename "$track_dir")
-        run "mkdir -p \"$dest_root/$track_name\""
-        run "cp \"$track_dir/SKILL.md\" \"$dest_root/$track_name/SKILL.md\""
+        run mkdir -p "$dest_root/$track_name"
+        run cp "$track_dir/SKILL.md" "$dest_root/$track_name/SKILL.md"
         echo "✓ Installed track: ${track_name}"
     done
 }
@@ -45,11 +68,11 @@ install_claude() {
 
     echo "Installing Claude-facing beta-ops assets..."
     copy_tracks "${skills_dir}"
-    run "mkdir -p \"$commands_dir\""
+    run mkdir -p "$commands_dir"
     for playbook_file in "$SCRIPT_DIR"/playbooks/*.md; do
         local playbook_name
         playbook_name=$(basename "$playbook_file")
-        run "cp \"$playbook_file\" \"$commands_dir/$playbook_name\""
+        run cp "$playbook_file" "$commands_dir/$playbook_name"
         echo "✓ Installed playbook: ${playbook_name}"
     done
 
@@ -79,8 +102,8 @@ install_opencode() {
     local example_dest="${opencode_dir}/opencode-beta-ops.example.json"
 
     echo "Installing Opencode example config..."
-    run "mkdir -p \"$opencode_dir\""
-    run "sed -e \"s|__BETA_OPS_ROOT__|${SCRIPT_DIR}|g\" -e \"s|__HOME__|${HOME}|g\" \"$SCRIPT_DIR/clients/opencode/opencode.example.json\" > \"$example_dest\""
+    run mkdir -p "$opencode_dir"
+    render_file "$SCRIPT_DIR/clients/opencode/opencode.example.json" "$example_dest"
     echo "Opencode example config copied to ${example_dest}"
     echo "Merge the skills, agent, and command sections into your active ~/.config/opencode/opencode.json."
 }

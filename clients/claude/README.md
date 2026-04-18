@@ -16,6 +16,12 @@ From the repo root:
 ./bootstrap.sh --client claude
 ```
 
+If you want the repo's Python helpers to run with pinned packages, install them from the repo root with:
+
+```bash
+python3 -m pip install -r requirements.txt
+```
+
 That installs:
 
 - tracks into `~/.claude/skills`
@@ -35,15 +41,9 @@ Tracks:
 
 Playbooks:
 
-- `boundary`
-- `mission`
-- `survey`
-- `probe`
-- `screen`
-- `gate`
-- `pivot`
-- `brief`
-- `contract-sweep`
+- every `playbooks/*.md` file, including `boundary`, `mission`, `survey`, `probe`, `screen`, `gate`, `pivot`, `brief`, `contract-sweep`, `pickup`, `recall`, `intel`, `cicd-scan`, and `autopilot`
+
+For MCP wiring, merge entries from [mcp/mcp-config.json](../../mcp/mcp-config.json) into `~/.claude/config.json` if you want the Burp Suite or HackerOne integrations.
 
 ## How Claude Uses It
 

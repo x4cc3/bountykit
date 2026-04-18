@@ -16,6 +16,12 @@ From the repo root:
 ./bootstrap.sh --client opencode
 ```
 
+If you want the repo's Python helpers to run with pinned packages, install them from the repo root with:
+
+```bash
+python3 -m pip install -r requirements.txt
+```
+
 That writes a rendered example file with absolute paths to:
 
 ```bash
@@ -135,12 +141,15 @@ For normal bug bounty work:
 
 Use narrower commands only when you already know the task:
 
+- `/field-manual`
 - `/survey` or `/surface-mapping`
 - `/mission`
 - `/probe`
-- `/screen` or `/verdict-gate`
+- `/screen`, `/gate`, or `/verdict-gate`
 - `/brief` or `/disclosure-lab`
-- `/contract-review`
+- `/payload-bank`, `/exploit-atlas`, or `/contract-review`
+
+The rendered config also includes `/boundary`, `/pivot`, `/contract-sweep`, and the other command entries defined in [opencode.example.json](./opencode.example.json).
 
 ## Verification
 
