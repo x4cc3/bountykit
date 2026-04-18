@@ -78,9 +78,9 @@ def fetch_programs():
         except (subprocess.TimeoutExpired, json.JSONDecodeError, Exception) as e:
             print(f"    [!] Fallback fetch failed: {e}")
 
-    # Method 3: Second fallback - use curated list
+    # Method 3: Do not return placeholder targets when live data is unavailable
     if not programs:
-        print("    [*] Using curated fallback program list...")
+        print("    [!] No live program data available.")
         programs = get_curated_programs()
 
     return programs
@@ -144,23 +144,8 @@ def parse_bounty_targets_program(prog):
 
 
 def get_curated_programs():
-    """Curated list of known good bug bounty targets for when APIs are down."""
-    return [
-        {
-            "name": "Example Program (placeholder)",
-            "handle": "example",
-            "url": "https://hackerone.com/example",
-            "managed": False,
-            "bounty_min": 100,
-            "bounty_max": 10000,
-            "response_efficiency": 80,
-            "assets": [],
-            "has_wildcard": True,
-            "started_accepting_at": "",
-            "source": "curated_fallback",
-            "note": "Replace with actual targets - run with internet access to fetch real programs",
-        }
-    ]
+    """Return no programs when live sources are unavailable."""
+    return []
 
 
 def score_program(prog):

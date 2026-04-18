@@ -19,6 +19,7 @@ except ImportError:
 
 
 MISSIONS_ROOT = repo_path("missions")
+RECON_ROOT = repo_path("recon")
 TARGET_PATTERN = re.compile(r"^[a-zA-Z0-9.-]+$")
 
 
@@ -56,6 +57,15 @@ def target_in_scope(target: str, scope: dict) -> bool:
 def update_state(state_path: str, state: dict) -> None:
     with open(state_path, "w", encoding="utf-8") as handle:
         json.dump(state, handle, indent=2)
+
+
+def load_tested_endpoints(target: str) -> list[str]:
+    live_urls_path = os.path.join(RECON_ROOT, target, "live", "urls.txt")
+    try:
+        with open(live_urls_path, encoding="utf-8") as handle:
+            return [line.strip() for line in handle if line.strip()][:50]
+    except OSError:
+        return []
 
 
 def main() -> None:
@@ -167,19 +177,14 @@ def main() -> None:
 
     # ── Save session to hunt memory ──────────────────────────────────────
     if save_session:
-        endpoints_tested = []
-        if os.path.exists(f"results/{args.target}/urls.txt"):
-            try:
-                with open(f"results/{args.target}/urls.txt") as f:
-                    endpoints_tested = [l.strip() for l in f if l.strip()][:50]
-            except Exception:
-                pass
         save_session(
             target=args.target,
-            summary=f"Autonomous mission '{mission_name}' — decision: {state['decision']}",
-            endpoints_tested=endpoints_tested,
-            findings_count=len(verdict.get("findings", [])),
-            notes="; ".join(state["notes"]),
+            endpoints_tested=load_tested_endpoints(args.target),
+            findings_count=len(verdict.get("packs", [])),
+            notes=(
+                f"Autonomous mission '{mission_name}' — decision: {state['decision']}"
+                + (f"; {'; '.join(state['notes'])}" if state["notes"] else "")
+            ),
         )
 
     # Save individual findings to memory
