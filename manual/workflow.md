@@ -1,6 +1,8 @@
 # beta-ops Workflow
 
-This repository uses a control-room model:
+Use this file as the canonical reference for the mission loop and routing across the repository.
+
+## Mission Loop
 
 1. `boundary`
 2. `survey`

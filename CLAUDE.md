@@ -27,31 +27,19 @@ chmod +x bootstrap.sh
 | `disclosure-lab` | Report writing |
 | `contract-review` | Smart contract review |
 
-## Playbooks
+## Workflow
+
+Use [workflow.md](./manual/workflow.md) as the canonical mission-loop, playbook-order, and role-routing reference.
+
+## Extra Commands
 
 - `/mission`
-- `/survey`
-- `/probe`
-- `/screen`
-- `/gate`
-- `/pivot`
-- `/brief`
-- `/boundary`
 - `/contract-sweep`
 - `/recall` — Pull up hunt memory for a target or bug class
 - `/intel` — CVE + disclosure intelligence before hunting
 - `/cicd-scan` — Scan CI/CD pipelines for security issues
 - `/pickup` — Resume a previous hunt session
 - `/autopilot` — Full autonomous hunt loop
-
-## Roles
-
-- `control-room`
-- `surface-cartographer`
-- `verdict-engine`
-- `evidence-editor`
-- `pivot-engine`
-- `contract-cartographer`
 
 ## Direct Tools
 
@@ -75,14 +63,4 @@ chmod +x bootstrap.sh
 
 See `mcp/README.md` for setup instructions.
 
-Use `control-room` as the default entrypoint. Switch to the narrower role only when the task is clearly bounded.
-
-Be explicit about role handoff:
-
-- use `surface-cartographer` for recon, asset discovery, and attack-surface ranking
-- use `verdict-engine` for quick triage, validation, and go/no-go decisions
-- use `pivot-engine` for exploit chaining and impact escalation
-- use `evidence-editor` for final report writing only after validation passes
-- use `contract-cartographer` for smart contract and DeFi review
-
-Do not keep specialist work inside `control-room` when one of those roles is the better fit.
+Use `control-room` as the default entrypoint. For specialist handoff and routing details, follow [workflow.md](./manual/workflow.md).
