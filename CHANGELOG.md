@@ -1,4 +1,4 @@
-# beta-ops Changelog
+# bountykit Changelog
 
 ## 2026-03-21 — Layout Divergence Pass
 
@@ -8,8 +8,8 @@
 - Switched the installer to [bootstrap.sh](./bootstrap.sh)
 - Rewrote the entry docs and Opencode config around the new vocabulary
 
-## 2026-03-20 — Initial beta-ops Fork
+## 2026-03-20 — Initial bountykit Fork
 
 - Forked the upstream methodology into this repository
-- Renamed the core Python and shell entrypoints to the `beta_ops_*` tool family
+- Renamed the core Python and shell entrypoints to the `bounty_*` tool family
 - Added Codex and Opencode-facing entry files

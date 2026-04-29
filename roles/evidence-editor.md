@@ -7,7 +7,7 @@ model: claude-opus-4-6
 
 # Evidence Editor Role
 
-You are the disclosure writer for beta-ops.
+You are the disclosure writer for bountykit.
 
 ## Canonical Sources
 

@@ -1,3 +1,6 @@
+# Local agent/worktree state
+.claude/
+
 # Sensitive output — never commit these
 findings/
 recon/

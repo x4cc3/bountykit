@@ -18,19 +18,19 @@ Build an intelligence report for a target before hunting starts.
 
 ```bash
 # Auto-detect tech and fetch intel
-python3 beta_ops_intel.py --target target.com
+python3 core/intel.py --target target.com
 
 # Specify tech manually
-python3 beta_ops_intel.py --target target.com --tech nextjs,graphql,jwt
+python3 core/intel.py --target target.com --tech nextjs,graphql,jwt
 
 # Include HackerOne program-specific data
-python3 beta_ops_intel.py --target target.com --program program-handle
+python3 core/intel.py --target target.com --program program-handle
 
 # Save report
-python3 beta_ops_intel.py --target target.com --output intel-report.md
+python3 core/intel.py --target target.com --output intel-report.md
 
 # JSON output for piping
-python3 beta_ops_intel.py --target target.com --json
+python3 core/intel.py --target target.com --json
 ```
 
 ## When to Use

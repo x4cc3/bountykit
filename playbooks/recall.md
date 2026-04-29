@@ -16,16 +16,16 @@ Pull up hunt memory for a target, bug class, or cross-target pattern.
 
 ```bash
 # Recall everything about a target
-python3 beta_ops_memory.py --recall target.com
+python3 core/memory.py --recall target.com
 
 # Recall everything about a bug class across targets
-python3 beta_ops_memory.py --recall IDOR
+python3 core/memory.py --recall IDOR
 
 # Recall all findings and patterns
-python3 beta_ops_memory.py --recall-all
+python3 core/memory.py --recall-all
 
 # Show memory statistics
-python3 beta_ops_memory.py --stats
+python3 core/memory.py --stats
 ```
 
 ## When to Use

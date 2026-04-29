@@ -1,10 +1,10 @@
 # MCP Integrations
 
-Model Context Protocol (MCP) servers that bridge beta-ops with external security tools.
+Model Context Protocol (MCP) servers that bridge bountykit with external security tools.
 
 ## Available Servers
 
-### Burp Suite MCP (`burp_mcp.py`)
+### Burp Suite MCP (`burp.py`)
 
 Reads proxy history, site map, and scan issues from Burp Suite Professional's REST API.
 
@@ -21,7 +21,7 @@ Reads proxy history, site map, and scan issues from Burp Suite Professional's RE
 - `burp_site_map` — Crawled site tree for a URL prefix
 - `burp_scan_issues` — Vulnerabilities found by Burp Scanner
 
-### HackerOne MCP (`hackerone_mcp.py`)
+### HackerOne MCP (`hackerone.py`)
 
 Queries HackerOne programs, scope, and disclosed reports.
 
@@ -48,11 +48,11 @@ Add to `~/.claude/config.json`:
   "mcpServers": {
     "burp-proxy": {
       "command": "python3",
-      "args": ["/path/to/beta-ops/mcp/burp_mcp.py"]
+      "args": ["/path/to/bountykit/mcp/burp.py"]
     },
     "hackerone": {
       "command": "python3",
-      "args": ["/path/to/beta-ops/mcp/hackerone_mcp.py"]
+      "args": ["/path/to/bountykit/mcp/hackerone.py"]
     }
   }
 }
@@ -67,12 +67,12 @@ Add to `.vscode/mcp.json`:
     "burp-proxy": {
       "type": "stdio",
       "command": "python3",
-      "args": ["mcp/burp_mcp.py"]
+      "args": ["mcp/burp.py"]
     },
     "hackerone": {
       "type": "stdio",
       "command": "python3",
-      "args": ["mcp/hackerone_mcp.py"]
+      "args": ["mcp/hackerone.py"]
     }
   }
 }

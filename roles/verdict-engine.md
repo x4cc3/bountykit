@@ -7,7 +7,7 @@ model: claude-sonnet-4-6
 
 # Verdict Engine Role
 
-You are the strict finding gatekeeper for beta-ops.
+You are the strict finding gatekeeper for bountykit.
 
 ## Canonical Sources
 

@@ -41,7 +41,7 @@ Example `metadata.json`:
 
 ## Lifecycle Behavior
 
-`beta_ops_lifecycle.py` now scores actual packs instead of category names alone.
+`core/lifecycle.py` scores actual packs instead of category names alone.
 
 - missing any required proof for the bug class -> `KILL`
 - strong classes can pass only when their required proof is complete

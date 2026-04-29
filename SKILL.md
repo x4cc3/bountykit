@@ -1,23 +1,15 @@
 ---
-name: beta-ops-router
-description: Entry skill for the beta-ops repository. Routes work to the right track, playbook, and role based on whether the task is scope checking, recon, active hunting, validation, reporting, exploit chaining, or smart contract review.
+name: bountykit-router
+description: Entry skill for the bountykit repository. Routes scoped security work through the canonical workflow, role, track, and playbook map.
 ---
 
-# beta-ops Router
+# bountykit Router
 
-This file is the short entrypoint for the repository.
+Use [manual/workflow.md](./manual/workflow.md) as the source of truth for:
 
-## Use The Narrowest Track That Fits
+- mission-loop order
+- optional utility playbooks
+- role handoff
+- track selection
 
-- `tracks/field-manual/SKILL.md` for end-to-end hunting
-- `tracks/surface-mapping/SKILL.md` for recon
-- `tracks/exploit-atlas/SKILL.md` for bug-class deep dives
-- `tracks/payload-bank/SKILL.md` for payloads and bypasses
-- `tracks/verdict-gate/SKILL.md` for validation
-- `tracks/disclosure-lab/SKILL.md` for report writing
-- `tracks/contract-review/SKILL.md` for smart contracts
-
-## Workflow and Coordinator
-
-Use [manual/workflow.md](./manual/workflow.md) for the canonical mission loop and routing.
-Start with `roles/control-room.md` unless the task is already narrow enough for a specialist role.
+Start with [roles/control-room.md](./roles/control-room.md) unless the task is already narrow enough for a specialist role.

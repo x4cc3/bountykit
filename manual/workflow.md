@@ -1,48 +1,64 @@
-# beta-ops Workflow
+# bountykit Workflow
 
-Use this file as the canonical reference for the mission loop and routing across the repository.
+This is the canonical mission-loop, playbook-order, role-routing, and track-routing reference for bountykit.
 
-## Mission Loop
+## Core Loop
 
-1. `boundary`
-2. `survey`
-3. `probe`
-4. `screen`
-5. `gate`
-6. `pivot`
-7. `brief`
+1. `boundary` — confirm scope before touching an asset
+2. `survey` — map the target surface
+3. `probe` — test one feature or bug class at a time
+4. `screen` — fast triage before deeper validation
+5. `gate` — full validation and reportability decision
+6. `pivot` — strengthen impact only when the evidence supports it
+7. `brief` — write the submission-ready report
 
-For unattended runs, use [manual/autonomous-operations.md](../manual/autonomous-operations.md). It wraps the same loop in explicit scope checks, state tracking, and stop decisions.
+For unattended scoped runs, use [manual/autonomous-operations.md](../manual/autonomous-operations.md). It wraps the same loop in explicit scope checks, state tracking, and stop decisions.
 
-## Routing
+## Playbook Routing
 
-- [playbooks/boundary.md](../playbooks/boundary.md) for scope checks
-- [playbooks/survey.md](../playbooks/survey.md) for recon
-- [playbooks/probe.md](../playbooks/probe.md) for active testing
-- [playbooks/screen.md](../playbooks/screen.md) for fast triage
-- [playbooks/gate.md](../playbooks/gate.md) for full validation
-- [playbooks/pivot.md](../playbooks/pivot.md) for chaining
-- [playbooks/brief.md](../playbooks/brief.md) for final write-up
-- [playbooks/contract-sweep.md](../playbooks/contract-sweep.md) for smart contracts
+| Need | Playbook |
+|---|---|
+| Scope check | [boundary](../playbooks/boundary.md) |
+| Recon and surface map | [survey](../playbooks/survey.md) |
+| Focused active test | [probe](../playbooks/probe.md) |
+| Fast triage | [screen](../playbooks/screen.md) |
+| Full validation | [gate](../playbooks/gate.md) |
+| Impact escalation | [pivot](../playbooks/pivot.md) |
+| Final write-up | [brief](../playbooks/brief.md) |
+| Scoped autonomous run | [mission](../playbooks/mission.md) |
+
+Optional utilities:
+
+| Need | Playbook |
+|---|---|
+| CVE and disclosure intelligence | [intel](../playbooks/intel.md) |
+| Resume previous context | [pickup](../playbooks/pickup.md) |
+| Recall hunt memory | [recall](../playbooks/recall.md) |
+| CI/CD security checks | [cicd-scan](../playbooks/cicd-scan.md) |
+| Smart contract lane | [contract-sweep](../playbooks/contract-sweep.md) |
 
 ## Role Routing
 
-- [roles/control-room.md](../roles/control-room.md) as the default driver
-- [roles/surface-cartographer.md](../roles/surface-cartographer.md) for mapping
-- [roles/verdict-engine.md](../roles/verdict-engine.md) for decisions
-- [roles/evidence-editor.md](../roles/evidence-editor.md) for write-ups
-- [roles/pivot-engine.md](../roles/pivot-engine.md) for escalation
-- [roles/contract-cartographer.md](../roles/contract-cartographer.md) for DeFi work
+| Work type | Role |
+|---|---|
+| Default coordination | [control-room](../roles/control-room.md) |
+| Recon and attack-surface ranking | [surface-cartographer](../roles/surface-cartographer.md) |
+| Triage and validation decisions | [verdict-engine](../roles/verdict-engine.md) |
+| Chain development | [pivot-engine](../roles/pivot-engine.md) |
+| Report writing | [evidence-editor](../roles/evidence-editor.md) |
+| Smart contract and DeFi review | [contract-cartographer](../roles/contract-cartographer.md) |
 
 ## Track Routing
 
-- [tracks/field-manual/SKILL.md](../tracks/field-manual/SKILL.md)
-- [tracks/surface-mapping/SKILL.md](../tracks/surface-mapping/SKILL.md)
-- [tracks/exploit-atlas/SKILL.md](../tracks/exploit-atlas/SKILL.md)
-- [tracks/payload-bank/SKILL.md](../tracks/payload-bank/SKILL.md)
-- [tracks/verdict-gate/SKILL.md](../tracks/verdict-gate/SKILL.md)
-- [tracks/disclosure-lab/SKILL.md](../tracks/disclosure-lab/SKILL.md)
-- [tracks/contract-review/SKILL.md](../tracks/contract-review/SKILL.md)
+| Need | Track |
+|---|---|
+| End-to-end hunting doctrine | [field-manual](../tracks/field-manual/SKILL.md) |
+| Recon and surface mapping | [surface-mapping](../tracks/surface-mapping/SKILL.md) |
+| Bug-class tactics | [exploit-atlas](../tracks/exploit-atlas/SKILL.md) |
+| Payloads and bypasses | [payload-bank](../tracks/payload-bank/SKILL.md) |
+| Validation doctrine | [verdict-gate](../tracks/verdict-gate/SKILL.md) |
+| Disclosure writing | [disclosure-lab](../tracks/disclosure-lab/SKILL.md) |
+| Smart contract review | [contract-review](../tracks/contract-review/SKILL.md) |
 
 ## Stop Conditions
 

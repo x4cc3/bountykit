@@ -1,6 +1,6 @@
-# beta-ops — Claude Guide
+# bountykit — Claude Guide
 
-This file is the Claude-specific doorway into the beta-ops layout.
+This file is the Claude-specific doorway into the bountykit layout.
 
 ## Install
 
@@ -11,56 +11,29 @@ chmod +x bootstrap.sh
 
 ## Read First
 
-- [workflow.md](./manual/workflow.md)
-- [hunting.md](./guardrails/hunting.md)
-- [control-room](./roles/control-room.md)
+- [workflow.md](./manual/workflow.md) — canonical loop, roles, tracks, and playbooks
+- [hunting.md](./guardrails/hunting.md) — scope and validation rules
+- [control-room](./roles/control-room.md) — default coordinator
+- [clients/claude/README.md](./clients/claude/README.md) — Claude install details
 
-## Available Tracks
+## Operating Model
 
-| Track | Purpose |
-|---|---|
-| `field-manual` | Full hunt loop |
-| `surface-mapping` | Recon and surface ranking |
-| `exploit-atlas` | Web bug-class reference |
-| `payload-bank` | Payloads and bypasses |
-| `verdict-gate` | Triage and validation |
-| `disclosure-lab` | Report writing |
-| `contract-review` | Smart contract review |
+Use `control-room` as the default entrypoint. Switch to the narrower role only when the task is clearly bounded. The canonical role handoff rules live in [manual/workflow.md](./manual/workflow.md).
 
-## Workflow
+## Public Tools
 
-Use [workflow.md](./manual/workflow.md) as the canonical mission-loop, playbook-order, and role-routing reference.
+Use the small public surface by default:
 
-## Extra Commands
+- `core/scope.py` for scope preflight
+- `core/mission.py` for scoped autonomous missions
+- `core/hunt.py` for manual orchestration
+- `core/intel.py`, `core/cicd.py`, and `core/memory.py` for specialist utility work
 
-- `/mission`
-- `/contract-sweep`
-- `/recall` — Pull up hunt memory for a target or bug class
-- `/intel` — CVE + disclosure intelligence before hunting
-- `/cicd-scan` — Scan CI/CD pipelines for security issues
-- `/pickup` — Resume a previous hunt session
-- `/autopilot` — Full autonomous hunt loop
-
-## Direct Tools
-
-- `beta_ops_hunt.py`
-- `beta_ops_recon.sh`
-- `beta_ops_learn.py`
-- `beta_ops_map.py`
-- `beta_ops_validate.py`
-- `beta_ops_report.py`
-- `beta_ops_scope.py`
-- `beta_ops_lifecycle.py`
-- `beta_ops_autonomous.py`
-- `beta_ops_memory.py` — Cross-session hunt memory (save/recall findings, techniques, patterns)
-- `beta_ops_intel.py` — CVE + disclosure intelligence engine
-- `beta_ops_cicd.py` — CI/CD pipeline security scanner
+Internal helpers live under `core/`; lab-only probes live under `labs/`.
 
 ## MCP Integrations
 
-- `mcp/burp_mcp.py` — Burp Suite proxy history, site map, scan issues
-- `mcp/hackerone_mcp.py` — HackerOne program scope, hacktivity, weaknesses
+- `mcp/burp.py` — Burp Suite proxy history, site map, scan issues
+- `mcp/hackerone.py` — HackerOne program scope, hacktivity, weaknesses
 
-See `mcp/README.md` for setup instructions.
-
-Use `control-room` as the default entrypoint. For specialist handoff and routing details, follow [workflow.md](./manual/workflow.md).
+See [mcp/README.md](./mcp/README.md) for setup instructions.

@@ -24,16 +24,16 @@ Scan GitHub Actions workflows for security vulnerabilities.
 
 ```bash
 # Scan a GitHub repository
-python3 beta_ops_cicd.py --repo owner/repo
+python3 core/cicd.py --repo owner/repo
 
 # Scan all repos in an org
-python3 beta_ops_cicd.py --org target-org
+python3 core/cicd.py --org target-org
 
 # Scan local workflow files
-python3 beta_ops_cicd.py --dir /path/to/repo
+python3 core/cicd.py --dir /path/to/repo
 
 # Save report
-python3 beta_ops_cicd.py --repo owner/repo --output cicd-findings.md
+python3 core/cicd.py --repo owner/repo --output cicd-findings.md
 ```
 
 ## Environment

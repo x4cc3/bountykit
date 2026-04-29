@@ -16,13 +16,13 @@ Resume a hunt from the last saved session.
 
 ```bash
 # Check what memory exists for a target
-python3 beta_ops_memory.py --recall target.com
+python3 core/memory.py --recall target.com
 
 # View all previous sessions
-python3 beta_ops_memory.py --recall-all
+python3 core/memory.py --recall-all
 
 # View aggregate stats
-python3 beta_ops_memory.py --stats
+python3 core/memory.py --stats
 ```
 
 ## Pickup Flow

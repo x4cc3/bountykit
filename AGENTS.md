@@ -1,46 +1,24 @@
-# AGENTS.md — beta-ops Control Surface
+# AGENTS.md — bountykit Control Surface
 
 Use this repository as an operations pack, not as a monolithic skill dump.
 
-## Read Order
+## Read First
 
-1. [workflow.md](./manual/workflow.md)
-2. [hunting.md](./guardrails/hunting.md)
-3. [field-manual](./tracks/field-manual/SKILL.md) or the narrower track you need
-4. A role brief from [roles](./roles)
-5. A playbook from [playbooks](./playbooks) when execution starts
+1. [workflow.md](./manual/workflow.md) — canonical loop, role routing, track routing, and playbook routing
+2. [hunting.md](./guardrails/hunting.md) — scope and validation rules
+3. [reporting.md](./guardrails/reporting.md) — disclosure constraints
+4. [control-room](./roles/control-room.md) — default coordinator
 
-## Canonical Vocabulary
+## Routing Rule
 
-- `tracks/` are knowledge lanes
-- `playbooks/` are procedures
-- `roles/` are specialist briefs
-- `guardrails/` are mandatory rules
-- `manual/` is the cross-client operating guide
+Start from [manual/workflow.md](./manual/workflow.md). It is the source of truth for:
 
-## Workflow and Routing
+- core mission order
+- optional utility playbooks
+- specialist role handoff
+- track selection
 
-Use [manual/workflow.md](./manual/workflow.md) as the canonical mission-loop and routing reference.
-Use `intel` when CVE or stack context matters, and use `recall` before resuming an older target.
-
-## Track Selection
-
-- [field-manual](./tracks/field-manual/SKILL.md) for end-to-end hunts
-- [surface-mapping](./tracks/surface-mapping/SKILL.md) for recon
-- [exploit-atlas](./tracks/exploit-atlas/SKILL.md) for class-specific testing
-- [payload-bank](./tracks/payload-bank/SKILL.md) for payloads and bypasses
-- [verdict-gate](./tracks/verdict-gate/SKILL.md) for validation
-- [disclosure-lab](./tracks/disclosure-lab/SKILL.md) for report writing
-- [contract-review](./tracks/contract-review/SKILL.md) for smart contracts
-
-## Role Entry Points
-
-- [control-room](./roles/control-room.md) is the default orchestrator
-- [surface-cartographer](./roles/surface-cartographer.md) handles recon
-- [verdict-engine](./roles/verdict-engine.md) handles finding decisions
-- [evidence-editor](./roles/evidence-editor.md) handles write-ups
-- [pivot-engine](./roles/pivot-engine.md) handles chaining
-- [contract-cartographer](./roles/contract-cartographer.md) handles web3 review
+Do not duplicate routing locally. If a task is clearly recon, validation, chaining, reporting, or contract review, hand it to the matching role listed in the workflow.
 
 ## Output Standard
 

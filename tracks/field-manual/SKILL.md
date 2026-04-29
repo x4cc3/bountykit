@@ -5,7 +5,7 @@ description: End-to-end bug bounty hunt loop. Covers recon, hunting, validation,
 
 # FIELD MANUAL
 
-Loop: Survey → Learn → Probe → Gate → Brief. For narrower tasks, use the specific track instead.
+Use the canonical loop in `../../manual/workflow.md`: `boundary` → `survey` → `probe` → `screen` → `gate` → `pivot` → `brief`. For narrower tasks, use the specific track instead.
 
 ---
 
