@@ -21,8 +21,22 @@ log_step()  { echo -e "    ${CYAN}[>]${NC} $1"; }
 log_done()  { echo -e "    ${GREEN}[✓]${NC} $1"; }
 log_vuln()  { echo -e "    ${RED}[V]${NC} $1"; }
 
+validate_domain() {
+    local domain="$1"
+    [[ "$domain" =~ ^[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$ ]] || return 1
+    [[ "$domain" =~ \.[A-Za-z]{2,}$ ]] || return 1
+}
+
 TARGET="${1:?Usage: $0 <target-domain> [--quick]}"
 QUICK_MODE="${2:-}"
+if ! validate_domain "$TARGET"; then
+    log_err "Unsupported target format: $TARGET"
+    exit 1
+fi
+if [ -n "$QUICK_MODE" ] && [ "$QUICK_MODE" != "--quick" ]; then
+    log_err "Unsupported option: $QUICK_MODE"
+    exit 1
+fi
 CORE_DIR="$(cd "$(dirname "$0")" && pwd)"
 BASE_DIR="$(cd "$CORE_DIR/.." && pwd)"
 RECON_DIR="$BASE_DIR/recon/$TARGET"
@@ -76,9 +90,9 @@ try:
     for entry in data:
         for name in entry.get('name_value', '').split('\n'):
             name = name.strip().lower()
-            if name and '*' not in name and name.endswith('.$TARGET'):
-                names.add(name)
-            elif name and '*' not in name and '.' in name:
+            if name.startswith('*.'):
+                name = name[2:]
+            if name and (name == '$TARGET' or name.endswith('.$TARGET')):
                 names.add(name)
     for n in sorted(names):
         print(n)

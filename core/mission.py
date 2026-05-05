@@ -3,12 +3,11 @@
 import argparse
 import json
 import os
-import re
 from datetime import UTC, datetime
 
 import hunt
 from lifecycle import evaluate_target, write_outputs
-from common import repo_path, utcnow
+from common import normalize_domain, repo_path, safe_join, sanitize_name, utcnow, validate_domain
 
 try:
     from memory import save_finding, save_session, recall_target
@@ -19,7 +18,6 @@ except ImportError:
 
 
 MISSIONS_ROOT = repo_path("missions")
-TARGET_PATTERN = re.compile(r"^[a-zA-Z0-9.-]+$")
 
 
 def load_scope(path: str) -> dict:
@@ -28,7 +26,13 @@ def load_scope(path: str) -> dict:
 
 
 def target_in_scope(target: str, scope: dict) -> bool:
-    denied = scope.get("out_of_scope", [])
+    target = normalize_domain(target)
+    denied = []
+    for item in scope.get("out_of_scope", []):
+        try:
+            denied.append(normalize_domain(item, allow_wildcard=True))
+        except ValueError:
+            continue
 
     for item in denied:
         if item.startswith("*."):
@@ -38,7 +42,12 @@ def target_in_scope(target: str, scope: dict) -> bool:
         elif target == item:
             return False
 
-    allowed = scope.get("in_scope_domains", [])
+    allowed = []
+    for item in scope.get("in_scope_domains", []):
+        try:
+            allowed.append(normalize_domain(item, allow_wildcard=True))
+        except ValueError:
+            continue
     for item in allowed:
         if item.startswith("*."):
             suffix = item[1:]
@@ -72,26 +81,30 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    if not TARGET_PATTERN.match(args.target):
-        raise SystemExit("Refusing target with unsupported characters")
+    try:
+        target = validate_domain(args.target, name="target")
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
 
     scope = load_scope(args.scope_file)
-    if not target_in_scope(args.target, scope):
+    if not target_in_scope(target, scope):
         raise SystemExit(
-            f"Target {args.target} is not explicitly listed in {args.scope_file}"
+            f"Target {target} is not explicitly listed in {args.scope_file}"
         )
 
-    mission_name = (
-        args.mission_name
-        or f"{args.target}-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}"
-    )
-    mission_dir = os.path.join(MISSIONS_ROOT, mission_name)
+    default_mission_name = f"{target}-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}"
+    raw_mission_name = args.mission_name or default_mission_name
+    mission_name = sanitize_name(raw_mission_name, fallback=default_mission_name)
+    try:
+        mission_dir = safe_join(MISSIONS_ROOT, mission_name)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
     os.makedirs(mission_dir, exist_ok=True)
     state_path = os.path.join(mission_dir, "state.json")
 
     state = {
         "mission": mission_name,
-        "target": args.target,
+        "target": target,
         "scope_file": os.path.abspath(args.scope_file),
         "started_at": utcnow(),
         "phase": "boundary",
@@ -101,10 +114,12 @@ def main() -> None:
     update_state(state_path, state)
 
     state["notes"].append("Scope file loaded and target allowlisted")
+    if mission_name != raw_mission_name:
+        state["notes"].append(f"Mission name sanitized from {raw_mission_name!r}")
 
     # ── Recall previous hunt memory ──────────────────────────────────────
     if recall_target:
-        memory = recall_target(args.target)
+        memory = recall_target(target)
         if memory and memory.get("finding_count", 0) > 0:
             state["notes"].append(
                 f"Hunt memory: {memory['finding_count']} previous finding(s), "
@@ -115,7 +130,7 @@ def main() -> None:
     state["phase"] = "survey"
     update_state(state_path, state)
 
-    recon_ok = hunt.run_recon(args.target, quick=args.quick)
+    recon_ok = hunt.run_recon(target, quick=args.quick)
     state["recon_ok"] = recon_ok
     if not recon_ok:
         state["decision"] = "ROTATE"
@@ -127,31 +142,31 @@ def main() -> None:
     state["phase"] = "probe"
     update_state(state_path, state)
 
-    scan_ok = hunt.run_vuln_scan(args.target, quick=args.quick)
+    scan_ok = hunt.run_vuln_scan(target, quick=args.quick)
     state["scan_ok"] = scan_ok
 
     if args.cve_hunt:
         state["phase"] = "probe:cve"
         update_state(state_path, state)
-        state["cve_ok"] = hunt.run_cve_hunt(args.target)
+        state["cve_ok"] = hunt.run_cve_hunt(target)
 
     if args.edge_case:
         state["phase"] = "probe:edge-case"
         update_state(state_path, state)
         state["edge_case_ok"] = hunt.run_edge_case_fuzzer(
-            args.target, deep=not args.quick
+            target, deep=not args.quick
         )
 
     state["phase"] = "screen"
-    verdict = evaluate_target(args.target)
-    json_path, md_path = write_outputs(args.target, verdict)
+    verdict = evaluate_target(target)
+    json_path, md_path = write_outputs(target, verdict)
     state["verdict"] = verdict
     state["verdict_json"] = json_path
     state["verdict_markdown"] = md_path
 
     if verdict["decision"] == "PASS":
         state["phase"] = "brief"
-        state["reports_generated"] = hunt.generate_reports(args.target)
+        state["reports_generated"] = hunt.generate_reports(target)
         state["decision"] = "REPORT READY"
     elif verdict["decision"] in {"CHAIN REQUIRED", "DOWNGRADE"}:
         state["decision"] = verdict["decision"]
@@ -164,14 +179,15 @@ def main() -> None:
     # ── Save session to hunt memory ──────────────────────────────────────
     if save_session:
         endpoints_tested = []
-        if os.path.exists(f"results/{args.target}/urls.txt"):
+        live_urls_path = repo_path("recon", target, "live", "urls.txt")
+        if os.path.exists(live_urls_path):
             try:
-                with open(f"results/{args.target}/urls.txt") as f:
+                with open(live_urls_path, encoding="utf-8", errors="replace") as f:
                     endpoints_tested = [l.strip() for l in f if l.strip()][:50]
             except Exception:
                 pass
         save_session(
-            target=args.target,
+            target=target,
             summary=f"Autonomous mission '{mission_name}' — decision: {state['decision']}",
             endpoints_tested=endpoints_tested,
             findings_count=len(verdict.get("findings", [])),
@@ -182,7 +198,7 @@ def main() -> None:
     if save_finding and verdict.get("findings"):
         for finding in verdict["findings"]:
             save_finding(
-                target=args.target,
+                target=target,
                 bug_class=finding.get("bug_class", "unknown"),
                 severity=finding.get("severity", "info"),
                 endpoint=finding.get("endpoint", ""),

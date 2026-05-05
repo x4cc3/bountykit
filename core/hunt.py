@@ -24,7 +24,7 @@ import subprocess
 import sys
 from datetime import datetime
 
-from common import repo_path
+from common import repo_path, validate_domain as common_validate_domain
 
 BASE_DIR = repo_path()
 CORE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -41,7 +41,7 @@ YELLOW = "\033[1;33m"
 CYAN = "\033[0;36m"
 BOLD = "\033[1m"
 NC = "\033[0m"
-TARGET_RE = re.compile(r"^[A-Za-z0-9.-]+$")
+SECLISTS_COMMIT = "2025.3"
 
 
 def log(level, msg):
@@ -69,9 +69,10 @@ def run_cmd(cmd: list[str], cwd=None, timeout=600, input_text=None):
 
 
 def validate_target(target):
-    if not target or not TARGET_RE.match(target):
-        raise ValueError(f"Unsupported target format: {target}")
-    return target
+    try:
+        return common_validate_domain(target, name="target")
+    except ValueError as exc:
+        raise ValueError(str(exc)) from exc
 
 
 def check_tools():
@@ -104,10 +105,10 @@ def setup_wordlists():
     os.makedirs(WORDLIST_DIR, exist_ok=True)
 
     wordlists = {
-        "common.txt": "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt",
-        "raft-medium-dirs.txt": "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/raft-medium-directories.txt",
-        "api-endpoints.txt": "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/api/api-endpoints.txt",
-        "params.txt": "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/burp-parameter-names.txt",
+        "common.txt": f"https://raw.githubusercontent.com/danielmiessler/SecLists/{SECLISTS_COMMIT}/Discovery/Web-Content/common.txt",
+        "raft-medium-dirs.txt": f"https://raw.githubusercontent.com/danielmiessler/SecLists/{SECLISTS_COMMIT}/Discovery/Web-Content/raft-medium-directories.txt",
+        "api-endpoints.txt": f"https://raw.githubusercontent.com/danielmiessler/SecLists/{SECLISTS_COMMIT}/Discovery/Web-Content/api/api-endpoints.txt",
+        "params.txt": f"https://raw.githubusercontent.com/danielmiessler/SecLists/{SECLISTS_COMMIT}/Discovery/Web-Content/burp-parameter-names.txt",
     }
 
     for name, url in wordlists.items():

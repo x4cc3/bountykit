@@ -21,18 +21,37 @@ log_step()  { echo -e "    ${CYAN}[>]${NC} $1"; }
 log_done()  { echo -e "    ${GREEN}[✓]${NC} $1"; }
 log_vuln()  { echo -e "    ${RED}[VULN]${NC} $1"; }
 
+validate_domain() {
+    local domain="$1"
+    [[ "$domain" =~ ^[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$ ]] || return 1
+    [[ "$domain" =~ \.[A-Za-z]{2,}$ ]] || return 1
+}
+
 RECON_DIR="${1:?Usage: $0 <recon_dir> [--quick]}"
 QUICK_MODE="${2:-}"
+CORE_DIR="$(cd "$(dirname "$0")" && pwd)"
+BASE_DIR="$(cd "$CORE_DIR/.." && pwd)"
 
+if [ -n "$QUICK_MODE" ] && [ "$QUICK_MODE" != "--quick" ]; then
+    log_err "Unsupported option: $QUICK_MODE"
+    exit 1
+fi
 if [ ! -d "$RECON_DIR" ]; then
     log_err "Recon directory not found: $RECON_DIR"
     exit 1
 fi
+RECON_DIR="$(cd "$RECON_DIR" && pwd -P)"
+case "$RECON_DIR" in
+    "$BASE_DIR/recon/"*) ;;
+    *) log_err "Recon directory must be under $BASE_DIR/recon"; exit 1 ;;
+esac
 
 # Determine target name from recon dir
 TARGET=$(basename "$RECON_DIR")
-CORE_DIR="$(cd "$(dirname "$0")" && pwd)"
-BASE_DIR="$(cd "$CORE_DIR/.." && pwd)"
+if ! validate_domain "$TARGET"; then
+    log_err "Unsupported target format: $TARGET"
+    exit 1
+fi
 FINDINGS_DIR="$BASE_DIR/findings/$TARGET"
 THREADS=10
 RATE_LIMIT=20  # Conservative default to avoid WAF blocks (429/403)

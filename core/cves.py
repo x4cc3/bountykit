@@ -20,11 +20,11 @@ import urllib.request
 from datetime import datetime
 from urllib.parse import quote
 
-from common import repo_path
+from common import validate_domain as common_validate_domain, repo_path
 
 BASE_DIR = repo_path()
 FINDINGS_DIR = repo_path("findings")
-TARGET_RE = re.compile(r"^[A-Za-z0-9.-]+$")
+GENERIC_TECH_TERMS = {"aws", "cloudflare", "server", "unknown", "cdn"}
 
 
 def run_cmd(cmd: list[str], timeout=30, input_text: str | None = None):
@@ -42,20 +42,46 @@ def run_cmd(cmd: list[str], timeout=30, input_text: str | None = None):
 
 
 def validate_domain(domain: str) -> str:
-    if not domain or not TARGET_RE.fullmatch(domain):
-        raise SystemExit(f"Unsupported domain format: {domain}")
-    return domain
+    try:
+        return common_validate_domain(domain)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
 
 
 def fetch_response(url: str, timeout: int = 5) -> tuple[int, dict[str, str], bytes]:
     req = urllib.request.Request(url, headers={"User-Agent": "bountykit CVE Hunter/1.0"})
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
-            return resp.status, dict(resp.headers.items()), resp.read()
+            return resp.status, dict(resp.headers.items()), resp.read(1_000_000)
     except urllib.error.HTTPError as exc:
-        return exc.code, dict(exc.headers.items()), exc.read()
+        return exc.code, dict(exc.headers.items()), exc.read(1_000_000)
     except Exception:
         return 0, {}, b""
+
+
+def fetch_json(url: str, timeout: int = 15, max_bytes: int = 2_000_000):
+    req = urllib.request.Request(url, headers={"User-Agent": "bountykit CVE Hunter/1.0"})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            body = resp.read(max_bytes + 1)
+            if len(body) > max_bytes:
+                return None, "response too large"
+            return json.loads(body.decode("utf-8", errors="replace")), None
+    except urllib.error.HTTPError as exc:
+        if exc.code == 429:
+            return None, "rate limited"
+        return None, f"HTTP {exc.code}"
+    except json.JSONDecodeError as exc:
+        return None, f"invalid JSON: {exc.msg}"
+    except Exception as exc:
+        return None, str(exc)
+
+
+def safe_float(value, default=0.0) -> float:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return default
 
 
 def detect_technologies(domain, recon_dir=None):
@@ -178,94 +204,72 @@ def search_cves(tech_name, max_results=10):
     """Search for CVEs related to a technology using public APIs."""
     cves = []
 
-    # Clean up tech name for search
     search_term = re.sub(r"[/.]", " ", tech_name).strip()
-    encoded_term = quote(search_term)
+    if len(search_term) < 3 or search_term.lower() in GENERIC_TECH_TERMS:
+        return cves
+    encoded_term = quote(search_term, safe="")
 
-    # Method 1: NVD API (NIST)
     print(f"    [>] Searching CVEs for: {tech_name}...")
-    try:
-        success, output = run_cmd(
-            [
-                "curl",
-                "-s",
-                f"https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch={encoded_term}&resultsPerPage={max_results}",
-                "--max-time",
-                "15",
-            ],
-            timeout=20,
-        )
-        if success and output:
-            data = json.loads(output)
-            for vuln in data.get("vulnerabilities", []):
-                cve_data = vuln.get("cve", {})
-                cve_id = cve_data.get("id", "")
-                descriptions = cve_data.get("descriptions", [])
-                desc = ""
-                for d in descriptions:
-                    if d.get("lang") == "en":
-                        desc = d.get("value", "")
-                        break
+    nvd_url = f"https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch={encoded_term}&resultsPerPage={max_results}"
+    data, error = fetch_json(nvd_url, timeout=20)
+    if error:
+        print(f"    [!] NVD lookup skipped for {tech_name}: {error}")
+    if isinstance(data, dict):
+        for vuln in data.get("vulnerabilities", []):
+            cve_data = vuln.get("cve", {}) if isinstance(vuln, dict) else {}
+            cve_id = cve_data.get("id", "")
+            descriptions = cve_data.get("descriptions", [])
+            desc = ""
+            for d in descriptions:
+                if isinstance(d, dict) and d.get("lang") == "en":
+                    desc = d.get("value", "")
+                    break
 
-                # Get CVSS score
-                metrics = cve_data.get("metrics", {})
-                cvss_score = 0
-                severity = "unknown"
-                for metric_key in ("cvssMetricV31", "cvssMetricV30", "cvssMetricV2"):
-                    metric_list = metrics.get(metric_key, [])
-                    if metric_list:
-                        cvss_data = metric_list[0].get("cvssData", {})
-                        cvss_score = cvss_data.get("baseScore", 0)
-                        severity = cvss_data.get("baseSeverity", "UNKNOWN").lower()
-                        break
+            metrics = cve_data.get("metrics", {})
+            cvss_score = 0.0
+            severity = "unknown"
+            for metric_key in ("cvssMetricV31", "cvssMetricV30", "cvssMetricV2"):
+                metric_list = metrics.get(metric_key, [])
+                if metric_list and isinstance(metric_list[0], dict):
+                    cvss_data = metric_list[0].get("cvssData", {})
+                    cvss_score = safe_float(cvss_data.get("baseScore"))
+                    severity = str(cvss_data.get("baseSeverity", "UNKNOWN")).lower()
+                    break
 
+            if cve_id:
+                cves.append(
+                    {
+                        "id": cve_id,
+                        "description": desc[:200],
+                        "cvss_score": cvss_score,
+                        "severity": severity,
+                        "technology": tech_name,
+                    }
+                )
+
+    if not cves:
+        circl_url = f"https://cve.circl.lu/api/search/{encoded_term}"
+        data, error = fetch_json(circl_url, timeout=20)
+        if error:
+            print(f"    [!] CIRCL lookup skipped for {tech_name}: {error}")
+        if isinstance(data, dict):
+            data = data.get("results", data.get("data", []))
+        if isinstance(data, list):
+            for item in data[:max_results]:
+                if not isinstance(item, dict):
+                    continue
+                cve_id = item.get("id", item.get("cve_id", ""))
+                score = safe_float(item.get("cvss"))
                 if cve_id:
                     cves.append(
                         {
                             "id": cve_id,
-                            "description": desc[:200],
-                            "cvss_score": cvss_score,
-                            "severity": severity,
+                            "description": item.get("summary", "")[:200],
+                            "cvss_score": score,
+                            "severity": "high" if score >= 7 else "medium",
                             "technology": tech_name,
                         }
                     )
-    except (json.JSONDecodeError, Exception):
-        pass
-
-    # Method 2: cve.circl.lu API (fallback)
-    if not cves:
-        try:
-            success, output = run_cmd(
-                [
-                    "curl",
-                    "-s",
-                    f"https://cve.circl.lu/api/search/{encoded_term}",
-                    "--max-time",
-                    "15",
-                ],
-                timeout=20,
-            )
-            if success and output:
-                data = json.loads(output)
-                if isinstance(data, dict):
-                    data = data.get("results", data.get("data", []))
-                if isinstance(data, list):
-                    for item in data[:max_results]:
-                        cve_id = item.get("id", item.get("cve_id", ""))
-                        if cve_id:
-                            cves.append(
-                                {
-                                    "id": cve_id,
-                                    "description": item.get("summary", "")[:200],
-                                    "cvss_score": item.get("cvss", 0),
-                                    "severity": "high"
-                                    if float(item.get("cvss", 0) or 0) >= 7
-                                    else "medium",
-                                    "technology": tech_name,
-                                }
-                            )
-        except (json.JSONDecodeError, Exception):
-            pass
 
     return cves
 

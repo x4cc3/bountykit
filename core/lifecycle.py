@@ -3,6 +3,7 @@
 import argparse
 import json
 import os
+import re
 
 from common import repo_path, utcnow
 
@@ -32,6 +33,17 @@ HIGH_NOISE_CLASSES = {
     "prompt_injection",
     "subdomain_takeover",
 }
+MIN_EVIDENCE_BYTES = {
+    "scope": 10,
+    "request": 20,
+    "response": 20,
+    "victim": 3,
+    "negative_control": 10,
+    "impact": 20,
+}
+PLACEHOLDER_WORDS = {"todo", "placeholder", "example only", "tbd", "fill me"}
+REQUEST_RE = re.compile(r"^(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s+\S+\s+HTTP/", re.I | re.M)
+RESPONSE_RE = re.compile(r"^HTTP/\S+\s+\d{3}\b", re.I | re.M)
 
 
 def normalize_bug_class(value: str) -> str:
@@ -86,6 +98,27 @@ def load_metadata(path: str) -> dict:
         return {}
 
 
+def evidence_has_content(path: str | None, key: str) -> bool:
+    if not path or not os.path.isfile(path):
+        return False
+    content = read_text(path)
+    if len(content) < MIN_EVIDENCE_BYTES.get(key, 1):
+        return False
+    lowered = content.lower()
+    if any(word in lowered for word in PLACEHOLDER_WORDS):
+        return False
+    if key == "request":
+        return bool(REQUEST_RE.search(content) or re.search(r"https?://", content, re.I))
+    if key == "response":
+        body = content.lstrip()
+        return bool(
+            RESPONSE_RE.search(content)
+            or body.startswith(("{", "["))
+            or len(content) >= 80
+        )
+    return True
+
+
 def first_existing(base_dir: str, names: list[str]) -> str | None:
     for name in names:
         path = os.path.join(base_dir, name)
@@ -113,12 +146,12 @@ def score_pack(pack: dict) -> dict:
     bug_class = normalize_bug_class(str(metadata.get("bug_class", pack["name"])))
 
     checks = {
-        "scope": bool(evidence["scope"]),
-        "request": bool(evidence["request"]),
-        "response": bool(evidence["response"]),
-        "victim": bool(evidence["victim"]),
-        "negative_control": bool(evidence["negative_control"]),
-        "impact": bool(evidence["impact"]),
+        "scope": evidence_has_content(evidence["scope"], "scope"),
+        "request": evidence_has_content(evidence["request"], "request"),
+        "response": evidence_has_content(evidence["response"], "response"),
+        "victim": evidence_has_content(evidence["victim"], "victim"),
+        "negative_control": evidence_has_content(evidence["negative_control"], "negative_control"),
+        "impact": evidence_has_content(evidence["impact"], "impact"),
     }
     score = sum(1 for passed in checks.values() if passed)
     required_keys = get_required_evidence_keys(bug_class)

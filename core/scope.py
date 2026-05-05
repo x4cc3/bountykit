@@ -9,7 +9,7 @@ import ssl
 import urllib.request
 from html import unescape
 
-from common import repo_path, utcnow
+from common import is_valid_domain, normalize_domain, repo_path, utcnow
 
 
 SCOPE_ROOT = repo_path("scope")
@@ -65,6 +65,16 @@ def extract_title(html: str, fallback: str) -> str:
     return re.sub(r"\s+", " ", title) or fallback
 
 
+def extract_domains(value: str) -> list[str]:
+    domains = []
+    for match in DOMAIN_RE.findall(value or ""):
+        try:
+            domains.append(normalize_domain(match, allow_wildcard=True))
+        except ValueError:
+            continue
+    return sorted(set(domains))
+
+
 def classify_scope_lines(text: str) -> tuple[list[str], list[str], list[str]]:
     in_scope = set()
     out_of_scope = set()
@@ -74,7 +84,7 @@ def classify_scope_lines(text: str) -> tuple[list[str], list[str], list[str]]:
         line = raw_line.strip(" -\t")
         if not line:
             continue
-        domains = DOMAIN_RE.findall(line)
+        domains = extract_domains(line)
         lowered = line.lower()
         if "out of scope" in lowered or lowered.startswith("excluded"):
             mode = "out"
@@ -133,6 +143,7 @@ def scope_from_csv(csv_path: str) -> dict:
     out_of_scope = set()
     notes = []
     asset_rows = []
+    review_required = []
 
     with open(csv_path, encoding="utf-8", errors="replace", newline="") as handle:
         reader = csv.DictReader(handle)
@@ -175,7 +186,9 @@ def scope_from_csv(csv_path: str) -> dict:
             if not asset:
                 continue
 
-            domains = DOMAIN_RE.findall(asset)
+            domains = extract_domains(asset)
+            if not domains and is_valid_domain(asset, allow_wildcard=True):
+                domains = [normalize_domain(asset, allow_wildcard=True)]
             if not domains and asset_type.lower() not in {
                 "url",
                 "api",
@@ -195,11 +208,14 @@ def scope_from_csv(csv_path: str) -> dict:
                 elif any(word in lowered for word in ["in scope", "eligible"]):
                     eligible = True
 
-            for domain in domains or [asset]:
-                if eligible is False:
+            for domain in domains:
+                if eligible is True:
+                    in_scope.add(domain)
+                elif eligible is False:
                     out_of_scope.add(domain)
                 else:
-                    in_scope.add(domain)
+                    review_required.append(domain)
+                    notes.append(f"Review required for unknown eligibility: {domain}")
 
             asset_rows.append(
                 {
@@ -207,6 +223,8 @@ def scope_from_csv(csv_path: str) -> dict:
                     "asset_type": asset_type,
                     "eligible": eligible,
                     "instruction": instruction,
+                    "domains": domains,
+                    "review_required": eligible is None,
                 }
             )
 
@@ -217,6 +235,7 @@ def scope_from_csv(csv_path: str) -> dict:
         "generated_at": utcnow(),
         "in_scope_domains": sorted(in_scope - out_of_scope),
         "out_of_scope": sorted(out_of_scope),
+        "review_required": sorted(set(review_required)),
         "notes": sorted(set(note for note in notes if note)),
         "raw_reference_urls": [],
         "asset_rows": asset_rows,

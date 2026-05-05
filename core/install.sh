@@ -15,6 +15,13 @@ NC='\033[0m'
 
 AUTO_YES=false
 ALLOW_BREW=false
+SUBFINDER_VERSION="v2.6.9"
+HTTPX_VERSION="v1.6.10"
+NUCLEI_VERSION="v3.3.8"
+AMASS_VERSION="v4.2.0"
+GAU_VERSION="v2.2.4"
+DALFOX_VERSION="v2.11.0"
+SUBJACK_VERSION="v1.2.0"
 
 log_ok()   { echo -e "${GREEN}[+]${NC} $1"; }
 log_err()  { echo -e "${RED}[-]${NC} $1"; }
@@ -281,13 +288,13 @@ fi
 echo ""
 log_info "Installing tools via Go when available"
 
-install_go_tool "subfinder" "github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest"
-install_go_tool "httpx" "github.com/projectdiscovery/httpx/cmd/httpx@latest"
-install_go_tool "nuclei" "github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest"
-install_go_tool "amass" "github.com/owasp-amass/amass/v4/cmd/amass@master"
-install_go_tool "gau" "github.com/lc/gau/v2/cmd/gau@latest"
-install_go_tool "dalfox" "github.com/hahwul/dalfox/v2@latest"
-install_go_tool "subjack" "github.com/haccer/subjack@latest"
+install_go_tool "subfinder" "github.com/projectdiscovery/subfinder/v2/cmd/subfinder@$SUBFINDER_VERSION"
+install_go_tool "httpx" "github.com/projectdiscovery/httpx/cmd/httpx@$HTTPX_VERSION"
+install_go_tool "nuclei" "github.com/projectdiscovery/nuclei/v3/cmd/nuclei@$NUCLEI_VERSION"
+install_go_tool "amass" "github.com/owasp-amass/amass/v4/cmd/amass@$AMASS_VERSION"
+install_go_tool "gau" "github.com/lc/gau/v2/cmd/gau@$GAU_VERSION"
+install_go_tool "dalfox" "github.com/hahwul/dalfox/v2@$DALFOX_VERSION"
+install_go_tool "subjack" "github.com/haccer/subjack@$SUBJACK_VERSION"
 
 echo ""
 log_info "Updating nuclei templates"
@@ -313,7 +320,7 @@ ALL_CORE=(subfinder httpx nuclei ffuf nmap amass gau dalfox subjack go)
 INSTALLED=0
 MISSING=0
 
-for tool in "${ALL_TOOLS[@]}"; do
+for tool in "${ALL_CORE[@]}"; do
     if have_cmd "$tool"; then
         log_ok "$tool: $(command -v "$tool")"
         INSTALLED=$((INSTALLED + 1))
@@ -325,6 +332,6 @@ done
 
 echo ""
 echo "============================================="
-echo "  Installed: $INSTALLED / ${#ALL_TOOLS[@]}"
+echo "  Installed: $INSTALLED / ${#ALL_CORE[@]}"
 [ "$MISSING" -gt 0 ] && echo "  Missing: $MISSING (install manually or re-run after adding prerequisites)"
 echo "============================================="
