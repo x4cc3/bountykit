@@ -52,7 +52,7 @@ Optional utilities:
 
 | Need | Track |
 |---|---|
-| End-to-end hunting doctrine | [field-manual](../tracks/field-manual/SKILL.md) |
+| End-to-end hunting doctrine | [hunt](../tracks/field-manual/SKILL.md) |
 | Recon and surface mapping | [surface-mapping](../tracks/surface-mapping/SKILL.md) |
 | Bug-class tactics | [exploit-atlas](../tracks/exploit-atlas/SKILL.md) |
 | Payloads and bypasses | [payload-bank](../tracks/payload-bank/SKILL.md) |

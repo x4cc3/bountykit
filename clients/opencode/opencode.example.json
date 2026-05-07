@@ -80,7 +80,7 @@
       "agent": "bountykit",
       "template": "Use __BOUNTYKIT_ROOT__/manual/workflow.md and __BOUNTYKIT_ROOT__/roles/control-room.md. If the target, feature, or finding is missing, ask for the minimum missing context and then take the best next step. Explicitly hand recon to `surface_cartographer`, validation to `verdict_engine`, chaining to `pivot_engine`, reporting to `evidence_editor`, and contract work to `contract_cartographer` when those lanes apply."
     },
-    "field-manual": {
+    "hunt": {
       "description": "Use the full mission track directly",
       "agent": "bountykit",
       "template": "Use __BOUNTYKIT_ROOT__/tracks/field-manual/SKILL.md. Apply the full mission loop to the current target, feature, or finding."

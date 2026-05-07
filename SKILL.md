@@ -1,9 +1,9 @@
 ---
-name: bountykit-router
+name: bountykit
 description: Entry skill for the bountykit repository. Routes scoped security work through the canonical workflow, role, track, and playbook map.
 ---
 
-# bountykit Router
+# bountykit
 
 Use [manual/workflow.md](./manual/workflow.md) as the source of truth for:
 

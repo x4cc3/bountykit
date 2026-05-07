@@ -6,7 +6,7 @@ Use bountykit in Codex by installing the tracks and using the repo's `AGENTS.md`
 
 - Codex control file: [AGENTS.md](../../AGENTS.md)
 - Canonical workflow: [workflow.md](../../manual/workflow.md)
-- Main full-loop track: [field-manual](../../tracks/field-manual/SKILL.md)
+- Main full-loop track: [hunt](../../tracks/field-manual/SKILL.md)
 
 ## Install
 
@@ -30,7 +30,7 @@ Recommended read order:
 
 1. [AGENTS.md](../../AGENTS.md)
 2. [workflow.md](../../manual/workflow.md)
-3. [field-manual](../../tracks/field-manual/SKILL.md) or the narrower track named by the workflow
+3. [hunt](../../tracks/field-manual/SKILL.md) or the narrower track named by the workflow
 
 For autonomous runs, use [playbooks/mission.md](../../playbooks/mission.md), generate scope JSON with `python3 core/scope.py --csv hackerone-scope.csv`, and run `python3 core/mission.py --target ... --scope-file ...`.
 
