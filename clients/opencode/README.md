@@ -130,7 +130,7 @@ Then add agent-specific `model` overrides only if you have a reason.
 
 For normal bug bounty work, use the `bountykit` agent or `/bountykit` command.
 
-Use [workflow.md](../../manual/workflow.md) as the canonical command map. The Opencode template exposes the core workflow, `/mission`, and the main track commands; optional utility playbooks may still be run from the repository docs when needed.
+Use [workflow.md](../../manual/workflow.md) as the canonical command map. The Opencode template exposes the core workflow, `/mission` (plus compatibility `/autopilot`), utility commands `/intel`, `/pickup`, `/recall`, `/cicd-scan`, and the main track commands.
 
 ## Verification
 

@@ -21,7 +21,7 @@
         "question": "allow",
         "plan_enter": "allow"
       },
-      "prompt": "Operate as the primary bountykit coordinator for the repository at __BOUNTYKIT_ROOT__. Read __BOUNTYKIT_ROOT__/manual/workflow.md, __BOUNTYKIT_ROOT__/roles/control-room.md, and __BOUNTYKIT_ROOT__/guardrails/hunting.md before acting. Keep the loop moving through boundary, survey, probe, screen, gate, pivot, and brief. Explicitly delegate to subagents when the task matches their lane: use `surface_cartographer` for recon and attack-surface mapping, `verdict_engine` for quick triage or full validation, `pivot_engine` for exploit chaining and impact escalation, `evidence_editor` for final report writing, and `contract_cartographer` for smart contract reviews. Do not keep specialist work inside the primary agent when a matching subagent would produce a better result."
+      "prompt": "Act as the primary bountykit coordinator. Read __BOUNTYKIT_ROOT__/manual/workflow.md, __BOUNTYKIT_ROOT__/roles/control-room.md, and __BOUNTYKIT_ROOT__/guardrails/hunting.md, then delegate to lane-specialist agents as needed."
     },
     "surface_cartographer": {
       "description": "Recon and attack-surface specialist",
@@ -31,7 +31,7 @@
         "question": "allow",
         "plan_enter": "allow"
       },
-      "prompt": "Operate as the surface cartographer for the repository at __BOUNTYKIT_ROOT__. Read __BOUNTYKIT_ROOT__/roles/surface-cartographer.md, __BOUNTYKIT_ROOT__/playbooks/survey.md, and __BOUNTYKIT_ROOT__/tracks/surface-mapping/SKILL.md. Stay inside scope, rank the attack surface, and stop shallow recon spirals early."
+      "prompt": "Act as a surface specialist. Read __BOUNTYKIT_ROOT__/roles/surface-cartographer.md, __BOUNTYKIT_ROOT__/playbooks/survey.md, and __BOUNTYKIT_ROOT__/tracks/surface-mapping/SKILL.md. Rank scoped surface and stop when shallow recon goes flat."
     },
     "verdict_engine": {
       "description": "Strict finding decision engine",
@@ -41,7 +41,7 @@
         "question": "allow",
         "plan_enter": "allow"
       },
-      "prompt": "Operate as the verdict engine for the repository at __BOUNTYKIT_ROOT__. Read __BOUNTYKIT_ROOT__/roles/verdict-engine.md, __BOUNTYKIT_ROOT__/playbooks/screen.md, __BOUNTYKIT_ROOT__/playbooks/gate.md, __BOUNTYKIT_ROOT__/guardrails/reporting.md, and __BOUNTYKIT_ROOT__/tracks/verdict-gate/SKILL.md. Output exactly one decision and the next action."
+      "prompt": "Act as verdict engine. Read __BOUNTYKIT_ROOT__/roles/verdict-engine.md, __BOUNTYKIT_ROOT__/playbooks/screen.md, __BOUNTYKIT_ROOT__/playbooks/gate.md, __BOUNTYKIT_ROOT__/guardrails/reporting.md, and __BOUNTYKIT_ROOT__/tracks/verdict-gate/SKILL.md. Return one decision (PASS/KILL/DOWNGRADE/CHAIN REQUIRED) plus next action."
     },
     "evidence_editor": {
       "description": "Impact-first disclosure writer",
@@ -51,7 +51,7 @@
         "question": "allow",
         "plan_enter": "allow"
       },
-      "prompt": "Operate as the evidence editor for the repository at __BOUNTYKIT_ROOT__. Read __BOUNTYKIT_ROOT__/roles/evidence-editor.md, __BOUNTYKIT_ROOT__/playbooks/brief.md, __BOUNTYKIT_ROOT__/guardrails/reporting.md, and __BOUNTYKIT_ROOT__/tracks/disclosure-lab/SKILL.md. Write concise impact-first reports with exact evidence and no theoretical phrasing."
+      "prompt": "Act as evidence editor. Read __BOUNTYKIT_ROOT__/roles/evidence-editor.md, __BOUNTYKIT_ROOT__/playbooks/brief.md, __BOUNTYKIT_ROOT__/guardrails/reporting.md, and __BOUNTYKIT_ROOT__/tracks/disclosure-lab/SKILL.md. Return concise evidence-first output without speculation."
     },
     "pivot_engine": {
       "description": "Exploit-chain escalation specialist",
@@ -61,7 +61,7 @@
         "question": "allow",
         "plan_enter": "allow"
       },
-      "prompt": "Operate as the pivot engine for the repository at __BOUNTYKIT_ROOT__. Read __BOUNTYKIT_ROOT__/roles/pivot-engine.md, __BOUNTYKIT_ROOT__/playbooks/pivot.md, and the relevant sections of __BOUNTYKIT_ROOT__/tracks/field-manual/SKILL.md. Only keep chains that can be proved from the current position."
+      "prompt": "Act as pivot engine. Read __BOUNTYKIT_ROOT__/roles/pivot-engine.md, __BOUNTYKIT_ROOT__/playbooks/pivot.md, and __BOUNTYKIT_ROOT__/tracks/exploit-atlas/SKILL.md plus __BOUNTYKIT_ROOT__/tracks/field-manual/SKILL.md. Return only provable chains."
     },
     "contract_cartographer": {
       "description": "Smart contract review specialist",
@@ -71,17 +71,22 @@
         "question": "allow",
         "plan_enter": "allow"
       },
-      "prompt": "Operate as the contract cartographer for the repository at __BOUNTYKIT_ROOT__. Read __BOUNTYKIT_ROOT__/roles/contract-cartographer.md, __BOUNTYKIT_ROOT__/playbooks/contract-sweep.md, and __BOUNTYKIT_ROOT__/tracks/contract-review/SKILL.md. Apply pre-dive filters first, then audit by bug-class priority."
+      "prompt": "Act as contract cartographer. Read __BOUNTYKIT_ROOT__/roles/contract-cartographer.md, __BOUNTYKIT_ROOT__/playbooks/contract-sweep.md, and __BOUNTYKIT_ROOT__/tracks/contract-review/SKILL.md. Apply pre-dive filters, then audit by bug class."
     }
   },
   "command": {
     "bountykit": {
       "description": "Start from the full bountykit workflow",
       "agent": "bountykit",
-      "template": "Use __BOUNTYKIT_ROOT__/manual/workflow.md and __BOUNTYKIT_ROOT__/roles/control-room.md. If the target, feature, or finding is missing, ask for the minimum missing context and then take the best next step. Explicitly hand recon to `surface_cartographer`, validation to `verdict_engine`, chaining to `pivot_engine`, reporting to `evidence_editor`, and contract work to `contract_cartographer` when those lanes apply."
+      "template": "Use __BOUNTYKIT_ROOT__/manual/workflow.md and __BOUNTYKIT_ROOT__/roles/control-room.md. If target/context is missing, ask once. Then route to the right specialist lane."
     },
     "hunt": {
       "description": "Use the full mission track directly",
+      "agent": "bountykit",
+      "template": "Use __BOUNTYKIT_ROOT__/tracks/field-manual/SKILL.md. Apply the full mission loop to the current target, feature, or finding."
+    },
+    "field-manual": {
+      "description": "Deprecated alias for /hunt",
       "agent": "bountykit",
       "template": "Use __BOUNTYKIT_ROOT__/tracks/field-manual/SKILL.md. Apply the full mission loop to the current target, feature, or finding."
     },
@@ -122,17 +127,42 @@
     "survey": {
       "description": "Map the attack surface for a target",
       "agent": "surface_cartographer",
-      "template": "Use __BOUNTYKIT_ROOT__/playbooks/survey.md. If the current conversation already contains a target, use it. Otherwise ask for one concise target or domain. Produce the best next surface to probe."
+      "template": "Use __BOUNTYKIT_ROOT__/playbooks/survey.md. If a target is present, use it; otherwise ask for one concise target/domain. Return the best surface to probe next."
     },
     "probe": {
       "description": "Run a focused hunt on a target or feature",
       "agent": "bountykit",
-      "template": "Use __BOUNTYKIT_ROOT__/playbooks/probe.md, __BOUNTYKIT_ROOT__/manual/workflow.md, and __BOUNTYKIT_ROOT__/roles/control-room.md. Read scope first, choose one promising attack lane, and keep the work narrow. If the work becomes primarily recon, validation, chaining, reporting, or contract review, explicitly delegate to the matching subagent instead of continuing in the primary agent."
+      "template": "Use __BOUNTYKIT_ROOT__/playbooks/probe.md, __BOUNTYKIT_ROOT__/manual/workflow.md, and __BOUNTYKIT_ROOT__/roles/control-room.md. Keep tests narrow: confirm scope, pick one lane, and delegate if recon/validation/chaining/reporting/contract work becomes primary."
     },
     "mission": {
       "description": "Run the autonomous mission workflow",
       "agent": "bountykit",
-      "template": "Use __BOUNTYKIT_ROOT__/playbooks/mission.md and __BOUNTYKIT_ROOT__/manual/autonomous-operations.md. Require explicit scope, run the narrowest autonomous plan that makes sense, and end with PASS, KILL, DOWNGRADE, or CHAIN REQUIRED plus the next action. Explicitly use `surface_cartographer` for surface mapping, `verdict_engine` for autonomous verdict review, `pivot_engine` for chain development, and `evidence_editor` for any report-ready outcome."
+      "template": "Use __BOUNTYKIT_ROOT__/playbooks/mission.md and __BOUNTYKIT_ROOT__/manual/autonomous-operations.md. Enforce scope and stop conditions. Return PASS/KILL/DOWNGRADE/CHAIN REQUIRED with next action and lane routing."
+    },
+    "autopilot": {
+      "description": "Deprecated compatibility alias for /mission",
+      "agent": "bountykit",
+      "template": "Use __BOUNTYKIT_ROOT__/playbooks/mission.md with the same target and constraints used for /mission."
+    },
+    "intel": {
+      "description": "Gather CVE/technology intelligence before hunting",
+      "agent": "bountykit",
+      "template": "Use __BOUNTYKIT_ROOT__/playbooks/intel.md. Produce a concise intelligence-first recommendation before heavy probing."
+    },
+    "pickup": {
+      "description": "Resume a prior hunt session for the target",
+      "agent": "bountykit",
+      "template": "Use __BOUNTYKIT_ROOT__/playbooks/pickup.md. Resume known state and continue from the best surviving lead."
+    },
+    "recall": {
+      "description": "Recall prior hunt memory (target/class/pattern)",
+      "agent": "bountykit",
+      "template": "Use __BOUNTYKIT_ROOT__/playbooks/recall.md. Return the narrowest high-signal memory signal and next action."
+    },
+    "cicd-scan": {
+      "description": "Run CI/CD security scanning workflow",
+      "agent": "bountykit",
+      "template": "Use __BOUNTYKIT_ROOT__/playbooks/cicd-scan.md. Perform lightweight CI/CD checks and report critical findings only."
     },
     "screen": {
       "description": "Fast triage before full validation",
@@ -152,12 +182,12 @@
     "brief": {
       "description": "Generate a submission-ready disclosure",
       "agent": "evidence_editor",
-      "template": "Use __BOUNTYKIT_ROOT__/playbooks/brief.md and __BOUNTYKIT_ROOT__/tracks/disclosure-lab/SKILL.md. Write a concise, evidence-heavy report with severity justification and remediation."
+      "template": "Use __BOUNTYKIT_ROOT__/playbooks/brief.md and __BOUNTYKIT_ROOT__/tracks/disclosure-lab/SKILL.md. Return a concise, evidence-first report with severity and remediation."
     },
     "contract-sweep": {
       "description": "Run the smart contract review lane",
       "agent": "contract_cartographer",
-      "template": "Use __BOUNTYKIT_ROOT__/playbooks/contract-sweep.md and __BOUNTYKIT_ROOT__/tracks/contract-review/SKILL.md. Apply pre-dive kill signals first, then audit by bug-class priority."
+      "template": "Use __BOUNTYKIT_ROOT__/playbooks/contract-sweep.md and __BOUNTYKIT_ROOT__/tracks/contract-review/SKILL.md. Apply pre-dive kill signals first, then audit by bug class."
     }
   }
 }

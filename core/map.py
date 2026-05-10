@@ -32,42 +32,42 @@ WEBSITE_CHECKS = [
     (
         "HIGH",
         "IDOR/ATO — enumerate user IDs in API endpoints",
-        "field-manual → IDOR section",
+        "exploit-atlas → 1. IDOR",
     ),
     (
         "HIGH",
         "Authentication bypass — test all auth flows (login, reset, OAuth)",
-        "field-manual → Auth Bypass section",
+        "exploit-atlas → 2. BROKEN AUTH / ACCESS CONTROL",
     ),
     (
         "HIGH",
         "SSRF — find server-side URL fetch params (`url=`, `webhook=`, `redirect=`)",
-        "field-manual → SSRF section",
+        "exploit-atlas → 4. SSRF",
     ),
     (
         "HIGH",
         "Race condition — parallel requests on transactions, coupons, credits",
-        "field-manual → Race Conditions section",
+        "exploit-atlas → 6. RACE CONDITIONS",
     ),
     (
         "MED",
         "Stored XSS — user input reflected in other users' views",
-        "field-manual → XSS section",
+        "exploit-atlas → 3. XSS",
     ),
     (
         "MED",
         "CSRF — state-changing requests without CSRF tokens",
-        "field-manual → CSRF section",
+        "verdict-gate → 7-QUESTION GATE",
     ),
     (
         "MED",
         "Open redirect — `returnTo`, `next`, `url` params with unvalidated URLs",
-        "field-manual → Open Redirect",
+        "exploit-atlas → 8. OAUTH / OIDC",
     ),
     (
         "MED",
         "Subdomain takeover — dangling CNAMEs to unclaimed services",
-        "surface-mapping → Phase 8",
+        "exploit-atlas → 15. SUBDOMAIN TAKEOVER",
     ),
     (
         "LOW",
@@ -81,39 +81,39 @@ OPENSRC_CHECKS = [
     (
         "HIGH",
         "Timing side-channel — `===` on HMAC/token/secret comparisons",
-        "field-manual → Timing Side-Channel section",
+        "exploit-atlas → 12. API MISCONFIG",
     ),
     (
         "HIGH",
         "JWT/token forgery — `alg:none`, weak secret, claim injection",
-        "field-manual → OIDC/OAuth section",
+        "exploit-atlas → 8. OAUTH / OIDC",
     ),
     (
         "HIGH",
         "Smart contract reentrancy / access control",
-        "field-manual → Smart Contract section",
+        "contract-review → 7. REENTRANCY",
     ),
     (
         "HIGH",
         "SSRF in server-side fetch — user-controlled URL passed to fetch/axios",
-        "field-manual → SSRF section",
+        "exploit-atlas → 4. SSRF",
     ),
     (
         "MED",
         "Event spoofing — SDK public `trigger()` / `postMessage` without origin check",
-        "field-manual → SDK/Client-Library section",
+        "exploit-atlas → 2. BROKEN AUTH / ACCESS CONTROL",
     ),
     (
         "MED",
         "Open redirect — `new URL(userInput, base)` does NOT prevent open redirect",
-        "field-manual → Open Redirect",
+        "exploit-atlas → 8. OAUTH / OIDC",
     ),
-    ("MED", "SIWE double-hash / nonce reuse", "field-manual → SIWE section"),
+    ("MED", "SIWE double-hash / nonce reuse", "exploit-atlas → 12. API MISCONFIG"),
     ("MED", "Hardcoded secrets in `.env.test` / config files", "manual grep"),
     (
         "MED",
         "Prototype pollution — unsafe `Object.assign` / deep merge on user input",
-        "field-manual → Prototype Pollution",
+        "payload-bank → PROTOTYPE POLLUTION",
     ),
     (
         "LOW",
@@ -126,22 +126,22 @@ API_CHECKS = [
     (
         "HIGH",
         "Auth bypass — test endpoints without Authorization header",
-        "field-manual → Auth Bypass section",
+        "exploit-atlas → 2. BROKEN AUTH / ACCESS CONTROL",
     ),
     (
         "HIGH",
         "IDOR — change numeric/UUID IDs in all requests",
-        "field-manual → IDOR section",
+        "exploit-atlas → 1. IDOR",
     ),
     (
         "HIGH",
         "Webhook SSRF — webhook URL field = SSRF vector",
-        "field-manual → SSRF section",
+        "exploit-atlas → 4. SSRF",
     ),
     (
         "HIGH",
         "JWT claim forgery — `x-hasura-role`, `sub`, `iss` manipulation",
-        "field-manual → OIDC/OAuth section",
+        "exploit-atlas → 8. OAUTH / OIDC",
     ),
     (
         "MED",
@@ -151,17 +151,17 @@ API_CHECKS = [
     (
         "MED",
         "Rate limit bypass — no rate limit on auth, OTP, or sensitive endpoints",
-        "field-manual → rate limiting",
+        "exploit-atlas → 12. API MISCONFIG",
     ),
     (
         "MED",
         "Race condition on batch/parallel operations",
-        "field-manual → Race Conditions section",
+        "exploit-atlas → 6. RACE CONDITIONS",
     ),
     (
         "LOW",
         "CORS misconfiguration — wildcard on credentialed endpoints",
-        "field-manual → CORS",
+        "verdict-gate → NEVER SUBMIT",
     ),
     ("LOW", "API key in URL — logs exposure of credentials", "manual review"),
 ]
@@ -170,7 +170,7 @@ MOBILE_CHECKS = [
     (
         "HIGH",
         "WebView JS injection — `addJavascriptInterface` without origin check",
-        "field-manual → SDK/Client-Library section",
+        "exploit-atlas → 2. BROKEN AUTH / ACCESS CONTROL",
     ),
     (
         "HIGH",
@@ -190,7 +190,7 @@ MOBILE_CHECKS = [
     (
         "MED",
         "SDK event spoofing — MiniKit/WalletConnect postMessage without origin check",
-        "field-manual → SDK section",
+        "exploit-atlas → 2. BROKEN AUTH / ACCESS CONTROL",
     ),
     (
         "MED",
@@ -207,17 +207,17 @@ TECH_CHECKS = {
         (
             "HIGH",
             "GraphQL IDOR — swap internalId in queries/mutations",
-            "field-manual → GraphQL section",
+            "exploit-atlas → 10. GRAPHQL",
         ),
         (
             "MED",
             "Introspection enabled — schema leakage, hidden fields/types",
-            "field-manual → GraphQL section",
+            "exploit-atlas → 10. GRAPHQL",
         ),
         (
             "MED",
             "Batch/alias abuse — 10k mutations to bypass rate limit",
-            "field-manual → GraphQL section",
+            "exploit-atlas → 10. GRAPHQL",
         ),
     ],
     "nextjs": [
@@ -229,34 +229,34 @@ TECH_CHECKS = {
         (
             "MED",
             "SSRF in getServerSideProps — user-controlled fetch URL",
-            "field-manual → SSRF section",
+            "exploit-atlas → 4. SSRF",
         ),
         (
             "MED",
             "Server Actions CSRF — test server actions without CSRF token",
-            "field-manual → CSRF section",
+            "verdict-gate → 7-QUESTION GATE",
         ),
     ],
     "solidity": [
         (
             "HIGH",
             "Reentrancy — check all ETH transfer calls",
-            "field-manual → Smart Contract section",
+            "contract-review → 7. REENTRANCY",
         ),
         (
             "HIGH",
             "Signature replay — EIP-712 domain separator, nullifier check",
-            "field-manual → Smart Contract section",
+            "contract-review → 9. SIGNATURE REPLAY",
         ),
         (
             "HIGH",
             "Access control — `onlyOwner` missing on privileged functions",
-            "field-manual → Smart Contract section",
+            "contract-review → 2. ACCESS CONTROL",
         ),
         (
             "MED",
             "Front-running — any state-dependent transaction ordering",
-            "field-manual → Smart Contract section",
+            "contract-review → 7. REENTRANCY",
         ),
     ],
     "jwt": [
@@ -273,31 +273,31 @@ TECH_CHECKS = {
         (
             "MED",
             "Claim injection — add `role: admin` or `x-hasura-role: admin`",
-            "field-manual → OIDC section",
+            "exploit-atlas → 8. OAUTH / OIDC",
         ),
     ],
     "oauth": [
         (
             "HIGH",
             "Open redirect in redirect_uri — steal auth code",
-            "field-manual → OIDC/OAuth section",
+            "exploit-atlas → 8. OAUTH / OIDC",
         ),
         (
             "HIGH",
             "CSRF on OAuth flow — missing state parameter check",
-            "field-manual → OIDC/OAuth section",
+            "exploit-atlas → 8. OAUTH / OIDC",
         ),
         (
             "MED",
             "Token leakage via referrer — access token in URL fragment",
-            "field-manual → OIDC/OAuth section",
+            "exploit-atlas → 8. OAUTH / OIDC",
         ),
     ],
     "hasura": [
         (
             "HIGH",
             "JWT claim forgery — `x-hasura-role: admin` in JWT payload",
-            "payload-bank → Hasura section",
+            "payload-bank → JWT section",
         ),
         (
             "HIGH",
@@ -307,14 +307,14 @@ TECH_CHECKS = {
         (
             "MED",
             "Action handler SSRF — Hasura action webhook URL configurable",
-            "field-manual → SSRF section",
+            "exploit-atlas → 4. SSRF",
         ),
     ],
     "aws": [
         (
             "HIGH",
             "SSRF to IMDSv1 — 169.254.169.254/latest/meta-data/iam/security-credentials",
-            "field-manual → SSRF section",
+            "exploit-atlas → 4. SSRF",
         ),
         (
             "MED",
@@ -331,9 +331,9 @@ TECH_CHECKS = {
         (
             "MED",
             "dangerouslySetInnerHTML with user input — DOM XSS",
-            "field-manual → XSS section",
+            "exploit-atlas → 3. XSS",
         ),
-        ("LOW", "Prototype pollution via props", "field-manual → Prototype Pollution"),
+        ("LOW", "Prototype pollution via props", "payload-bank → PROTOTYPE POLLUTION"),
     ],
 }
 

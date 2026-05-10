@@ -71,4 +71,4 @@ Return:
 2. current lane
 3. strongest signal or proof
 4. missing proof, if any
-5. next action: continue, pivot, gate, brief, or rotate
+5. next action: continue, screen, pivot, gate, brief, or rotate

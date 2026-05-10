@@ -66,6 +66,22 @@ if "$ROOT/bootstrap.sh" --client >/tmp/bountykit-bootstrap.out 2>&1; then
 fi
 grep -q "Missing value for --client" /tmp/bountykit-bootstrap.out
 "$ROOT/bootstrap.sh" --dry-run --client opencode >/tmp/bountykit-bootstrap-dry.out
+python3 - "$ROOT/clients/opencode/opencode.example.json" <<'PY'
+import json, sys
+config = json.load(open(sys.argv[1]))
+commands = set(config['command'])
+required_commands = {
+    'bountykit', 'hunt', 'field-manual',
+    'surface-mapping', 'exploit-atlas', 'payload-bank', 'verdict-gate',
+    'disclosure-lab', 'contract-review',
+    'boundary', 'survey', 'probe', 'mission', 'autopilot',
+    'intel', 'pickup', 'recall', 'cicd-scan',
+    'screen', 'gate', 'pivot', 'brief', 'contract-sweep',
+}
+missing = sorted(required_commands - commands)
+if missing:
+    raise SystemExit(f"Opencode command-set regression: missing {missing}")
+PY
 if grep -q 'eval "\$@"' "$ROOT/bootstrap.sh"; then
   echo "bootstrap still uses eval" >&2
   exit 1
