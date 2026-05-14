@@ -8,7 +8,7 @@ Full validation before report writing. Kills weak findings. Prevents N/A submiss
 
 ## Canonical Source
 
-All validation logic lives in `tracks/verdict-gate/SKILL.md` and `tracks/verdict-gate/references/proof-matrix.md`. This playbook is the execution wrapper.
+All validation logic lives in `../tracks/verdict/SKILL.md` and `../tracks/verdict/references/proof-matrix.md`. This playbook is the execution wrapper.
 
 ## Execution
 
@@ -16,7 +16,7 @@ All validation logic lives in `tracks/verdict-gate/SKILL.md` and `tracks/verdict
 2. Check required evidence pack (all 6 items)
 3. Check never-submit list — if listed, require proved chain
 4. Run 4 pre-submission gates (Gate 0→3)
-5. Load `references/proof-matrix.md` for class-specific proof before final PASS
+5. Load `../tracks/verdict/references/proof-matrix.md` for class-specific proof before final PASS
 
 ## Input Required
 

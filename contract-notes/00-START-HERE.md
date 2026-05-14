@@ -19,7 +19,6 @@ description: Master index for the web3 smart contract security knowledge base. U
 04-poc-and-foundry.md         ← Foundry PoC writing, cheatcodes, 18 exploit templates
 05-triage-report-examples.md  ← 7-Question Gate, report format, 20 real paid examples
 06-methodology-research.md    ← ToB, SlowMist, ConsenSys, Immunefi, Cyfrin, Lido, Nethermind
-07-live-hunt-ern.md           ← Completed hunt: Ern protocol (2 findings)
 09-live-hunt-zksync.md        ← Completed hunt: ZKsync Era (0 findings — defense study)
 08-ai-tools.md                ← Shannon, LuaN1ao, SmartGuard, CAI Framework, AI code hunting
 36-solidity-audit-mcp.md      ← MCP server: Slither+Aderyn+SWC in Claude Code

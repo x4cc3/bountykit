@@ -52,13 +52,13 @@ Optional utilities:
 
 | Need | Track |
 |---|---|
-| End-to-end hunting doctrine | [hunt](../tracks/field-manual/SKILL.md) |
-| Recon and surface mapping | [surface-mapping](../tracks/surface-mapping/SKILL.md) |
-| Bug-class tactics | [exploit-atlas](../tracks/exploit-atlas/SKILL.md) |
-| Payloads and bypasses | [payload-bank](../tracks/payload-bank/SKILL.md) |
-| Validation doctrine | [verdict-gate](../tracks/verdict-gate/SKILL.md) |
-| Disclosure writing | [disclosure-lab](../tracks/disclosure-lab/SKILL.md) |
-| Smart contract review | [contract-review](../tracks/contract-review/SKILL.md) |
+| End-to-end hunting doctrine | [hunt](../tracks/hunt/SKILL.md) |
+| Recon and surface | [surface](../tracks/surface/SKILL.md) |
+| Bug-class tactics | [exploit](../tracks/exploit/SKILL.md) |
+| Payloads and bypasses | [payloads](../tracks/payloads/SKILL.md) |
+| Validation doctrine | [verdict](../tracks/verdict/SKILL.md) |
+| Disclosure writing | [disclosure](../tracks/disclosure/SKILL.md) |
+| Smart contracts | [contracts](../tracks/contracts/SKILL.md) |
 
 ## Stop Conditions
 

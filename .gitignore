@@ -1,5 +1,7 @@
 # Local agent/worktree state
 .claude/
+.ruff_cache/
+progress.md
 
 # Sensitive output — never commit these
 findings/

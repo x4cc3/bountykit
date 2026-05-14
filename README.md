@@ -1,59 +1,23 @@
 # bountykit
 
-`bountykit` is a mission-control repository for scoped bug bounty work across Codex, Opencode, Claude, and other agent clients.
+`bountykit` is a markdown operations pack for scoped bug bounty work in Disposable, Codex, Opencode, Claude, and similar agent clients.
 
-The default path is intentionally small:
-
-1. confirm scope
-2. run the canonical workflow
-3. validate evidence before reporting
-
-Use [manual/workflow.md](./manual/workflow.md) as the canonical router for workflow order, roles, tracks, and playbooks.
+It does not ship scanner wrappers or local CLI tools. Use Disposable's CLI/tooling for execution; use this repo for workflow, guardrails, role routing, validation rules, and report discipline.
 
 ## Start Here
 
 - Workflow: [manual/workflow.md](./manual/workflow.md)
 - Guardrails: [guardrails/hunting.md](./guardrails/hunting.md)
+- Reporting: [guardrails/reporting.md](./guardrails/reporting.md)
 - Autonomous missions: [manual/autonomous-operations.md](./manual/autonomous-operations.md)
 - Evidence packs: [manual/evidence-packs.md](./manual/evidence-packs.md)
-- Architecture notes: [manual/codebase-architecture.md](./manual/codebase-architecture.md)
 
-Client setup:
+## How To Use
 
-- Codex: [clients/codex/README.md](./clients/codex/README.md)
-- Claude Code: [clients/claude/README.md](./clients/claude/README.md)
-- Opencode: [clients/opencode/README.md](./clients/opencode/README.md)
-
-Install client assets with:
-
-```bash
-chmod +x bootstrap.sh
-./bootstrap.sh --client codex
-./bootstrap.sh --client claude
-./bootstrap.sh --client opencode
-```
-
-For Opencode, `bootstrap.sh` renders an example config with absolute repo paths into `~/.config/opencode/opencode-bountykit.example.json`. Follow [clients/opencode/README.md](./clients/opencode/README.md) and merge the rendered config into your live Opencode config.
-
-## Public Entry Points
-
-| Entry point | Purpose |
-|---|---|
-| `bootstrap.sh` | Install client assets |
-| `core/scope.py` | Convert program scope into explicit allowlists |
-| `core/mission.py` | Run a scoped autonomous mission |
-| `core/hunt.py` | Run the manual hunt orchestrator |
-| `smoke.sh` | Verify the repo locally |
-
-Specialist utilities:
-
-| Utility | Purpose |
-|---|---|
-| `core/intel.py` | CVE and disclosure intelligence |
-| `core/cicd.py` | CI/CD pipeline checks |
-| `core/memory.py` | Cross-session hunt memory |
-
-Implementation scripts live under `core/`; lab-only probes live under `labs/`. The repo root stays focused on docs, setup, and verification.
+1. Read the workflow and guardrails.
+2. Pick the matching playbook or track at the repo root.
+3. Run the needed Disposable CLI commands in your disposable workspace.
+4. Bring exact evidence back through `/screen`, `/gate`, and `/brief` before reporting.
 
 ## Repository Map
 
@@ -61,16 +25,19 @@ Implementation scripts live under `core/`; lab-only probes live under `labs/`. T
 |---|---|
 | `manual/` | Canonical workflow and operating references |
 | `guardrails/` | Always-on hunting and reporting constraints |
-| `tracks/` | Doctrine for recon, exploit classes, payloads, validation, disclosure, and contract review |
-| `playbooks/` | Command-shaped wrappers around the canonical workflow |
+| `tracks/` | Doctrine for recon, exploit classes, payloads, validation, disclosure, and contracts |
+| `playbooks/` | Command-shaped operating procedures |
 | `roles/` | Specialist role briefs for delegation |
-| `clients/` | Bootstrap notes for Codex, Claude, and Opencode |
-| `mcp/` | Optional Burp and HackerOne integrations |
-| `wordlists/` | Local recon and fuzzing dictionaries |
-| `core/` | Main implementation scripts |
-| `labs/` | Specialized probes and experiments |
 | `contract-notes/` | Long-form smart contract reference material |
+| `clients/` | Client-specific setup notes |
+
+## Non-Goals
+
+- No bundled scanner wrappers.
+- No local MCP servers.
+- No repo-owned wordlists or generated findings directories.
+- No replacement for Disposable's execution environment.
 
 ## Attribution
 
-The methodology and source material originate from [shuvonsec/claude-bug-bounty](https://github.com/shuvonsec/claude-bug-bounty), but this repository now uses a different layout, naming scheme, and client workflow surface.
+The methodology and source material originate from [shuvonsec/claude-bug-bounty](https://github.com/shuvonsec/claude-bug-bounty), but this repository now uses a docs-first workflow surface.

@@ -8,7 +8,7 @@ Generate a submission-ready report. All 4 gates from `/gate` must pass first.
 
 ## Canonical Source
 
-Report template, writing rules, CVSS guidance, and checklist live in `tracks/disclosure-lab/SKILL.md`. This playbook is the execution wrapper.
+Report template, writing rules, CVSS guidance, and checklist live in `../tracks/disclosure/SKILL.md`. This playbook is the execution wrapper.
 
 ## Input Required
 
@@ -19,10 +19,10 @@ Report template, writing rules, CVSS guidance, and checklist live in `tracks/dis
 
 ## Execution
 
-1. Load `tracks/disclosure-lab/SKILL.md`
+1. Load `../tracks/disclosure/SKILL.md`
 2. Generate title using formula: `[BugClass] in [Feature] allows [attacker] to [impact] via [vector]`
 3. Fill universal report template with exact evidence
-4. Calculate CVSS (use verdict-gate quick ref)
+4. Calculate CVSS (use verdict quick ref)
 5. Write concrete remediation (code-level if possible)
 6. Run 60-second pre-submit checklist
 

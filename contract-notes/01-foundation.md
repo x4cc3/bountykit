@@ -274,7 +274,7 @@ STAKING / RESTAKING:
 | Ready to validate + submit | 05-triage-report |
 | Need all bug class patterns | 02-bug-classes |
 | Want external research depth | 06-methodology |
-| Hunting Ern protocol | 07-live-hunt-ern |
+| Hunting ZKsync Era | 09-live-hunt-zksync |
 | Want AI tool automation | 08-ai-tools |
 
 ---

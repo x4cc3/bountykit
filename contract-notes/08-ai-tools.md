@@ -443,7 +443,7 @@ Hour 1: Setup + recon (01-foundation playbook)
 
 Hours 2-3: Parallel work
   ├── Shannon/LuaN1ao runs autonomously (web layer)
-  └── YOU do manual smart contract review (02-bug-classes playbook)
+  └── YOU do manual smart contracts (02-bug-classes playbook)
 
 Hour 3.5: Review AI findings
   ├── Verify each PoC manually

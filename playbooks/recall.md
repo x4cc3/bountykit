@@ -1,44 +1,24 @@
 ---
-description: "Quick-recall what you know about a target, bug class, or pattern from previous sessions. Usage: /recall target.com | /recall IDOR"
+description: Recall prior hunt context, patterns, or known dead ends. Usage: /recall target-or-bug-class
 ---
 
 # /recall
 
-Pull up hunt memory for a target, bug class, or cross-target pattern.
+Recall prior context before repeating work.
 
 ## What This Does
 
-1. Searches the hunt memory database for matching findings, techniques, and sessions
-2. Shows cross-target patterns detected across all hunts
-3. Outputs actionable context for resuming work
+1. Searches available notes, evidence packs, reports, and memory from the disposable workspace
+2. Identifies repeated bug classes, targets, endpoints, or dead ends
+3. Returns the narrowest high-signal next action
 
-## Usage
+## Execution
 
-```bash
-# Recall everything about a target
-python3 core/memory.py --recall target.com
-
-# Recall everything about a bug class across targets
-python3 core/memory.py --recall IDOR
-
-# Recall all findings and patterns
-python3 core/memory.py --recall-all
-
-# Show memory statistics
-python3 core/memory.py --stats
-```
-
-## When to Use
-
-- Starting a new session on a target you've hunted before
-- Looking for patterns across multiple programs
-- Before `/survey` to skip already-explored areas
-- Before `/probe` to focus on known-weak endpoints
+Use workspace notes or Disposable CLI/tools. This repo does not ship a memory database wrapper.
 
 ## Output
 
-Returns a JSON summary with:
-- Previous findings (severity, status, endpoints)
-- Techniques that worked
-- Session summaries
-- Auto-detected cross-target patterns
+- remembered target or bug class
+- strongest reusable evidence
+- dead ends to avoid
+- next action

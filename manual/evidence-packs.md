@@ -4,7 +4,7 @@ Autonomous lifecycle decisions are strongest when findings are stored as evidenc
 
 ## Pack Layout
 
-Store each candidate under `findings/<target>/<pack-name>/`.
+Store each candidate under `findings/<target>/<pack-name>/` in the disposable workspace.
 
 Recommended files:
 
@@ -41,11 +41,11 @@ Example `metadata.json`:
 
 ## Lifecycle Behavior
 
-`core/lifecycle.py` scores actual packs instead of category names alone.
+Lifecycle review should score actual packs instead of category names alone.
 
 - missing any required proof for the bug class -> `KILL`
 - strong classes can pass only when their required proof is complete
 - noisy classes stay fail-closed unless impact and control evidence are present
 - chain-prone classes without impact -> `CHAIN REQUIRED`
 
-That means the autonomous layer is now judging proof quality, not just file names.
+That means autonomous review should judge proof quality, not just file names.

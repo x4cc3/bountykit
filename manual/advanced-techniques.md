@@ -1,6 +1,6 @@
 # Advanced Techniques
 
-> A->B chain hunting and exploit chains covered in `tracks/exploit-atlas/SKILL.md`. This file covers framework-specific attacks, mobile, CI/CD, API, and advanced testing techniques.
+> A->B chain hunting and exploit chains covered in `../tracks/exploit/SKILL.md`. This file covers framework-specific attacks, mobile, CI/CD, API, and advanced testing techniques.
 
 ---
 

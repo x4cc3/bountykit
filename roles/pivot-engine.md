@@ -11,7 +11,7 @@ Chain specialist. Take confirmed bug A → find B and C → higher severity.
 
 ## Canonical Source
 
-Chain table and full chain examples live in `tracks/exploit-atlas/SKILL.md`. Load it before chaining.
+Chain table and full chain examples live in `../tracks/exploit/SKILL.md`. Load it before chaining.
 
 ## A→B Chain Table (quick ref)
 

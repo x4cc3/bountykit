@@ -10,9 +10,9 @@ Run one disciplined hunting lane at a time.
 
 Use these as the authoritative hunting references:
 
-- `tracks/field-manual/SKILL.md` (`hunt`) for the mission loop and hunting rules
-- `tracks/exploit-atlas/SKILL.md` for bug-class tactics, root causes, and chaining
-- `tracks/payload-bank/SKILL.md` for payloads and bypass ideas
+- `../tracks/hunt/SKILL.md` (`hunt`) for the mission loop and hunting rules
+- `../tracks/exploit/SKILL.md` for bug-class tactics, root causes, and chaining
+- `../tracks/payloads/SKILL.md` for payloads and bypass ideas
 
 This playbook is only the execution wrapper.
 

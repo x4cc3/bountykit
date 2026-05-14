@@ -1,19 +1,15 @@
 ---
-description: Compatibility alias for /mission. Use /mission for autonomous bountykit runs.
+description: Compatibility alias for /mission. Prefer /mission for new autonomous runs.
 ---
 
 # /autopilot
 
-`/autopilot` is deprecated as a separate command surface. Use [mission](./mission.md) for scoped autonomous runs.
+Compatibility alias for [mission](./mission.md).
 
-The direct runner is unchanged:
+Use the same scope-first mission contract:
 
-```bash
-python3 core/mission.py \
-  --target target.com \
-  --scope-file scope/target.json \
-  --mission-name target-main \
-  --quick
-```
-
-Safety rules, state artifacts, and output expectations are owned by [manual/autonomous-operations.md](../manual/autonomous-operations.md) and [playbooks/mission.md](./mission.md).
+1. confirm explicit scope
+2. choose one narrow lane
+3. run the Disposable CLI/tools
+4. screen or gate the evidence
+5. stop, rotate, pivot, or brief based on proof

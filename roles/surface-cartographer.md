@@ -11,7 +11,7 @@ Web recon specialist. Given a target domain, run full pipeline → prioritized a
 
 ## Canonical Source
 
-Full recon pipeline, triage commands, tech fingerprint table, and target scoring live in `tracks/surface-mapping/SKILL.md`. Load it before recon.
+Full recon pipeline, triage commands, tech fingerprint table, and target scoring live in `../tracks/surface/SKILL.md`. Load it before recon.
 
 ## Protocol
 

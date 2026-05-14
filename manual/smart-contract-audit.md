@@ -1,6 +1,6 @@
 # Smart Contract Audit — Reference
 
-> Bug classes, grep patterns, scoring, kill signals, and Foundry PoC template live in `tracks/contract-review/SKILL.md`. This file covers supplementary reference only.
+> Bug classes, grep patterns, scoring, kill signals, and Foundry PoC template live in `../tracks/contracts/SKILL.md`. This file covers supplementary reference only.
 
 ---
 
@@ -25,7 +25,7 @@ ZK ROLLUP: unsound constraints, unconstrained witness, missing range checks, exo
 3. `forge build && forge test && forge coverage` — note coverage gaps
 4. Static analysis: `slither . --exclude-low`, `aderyn .`, `myth analyze src/X.sol`
 5. Map architecture: contracts, value flows, privileged roles, oracle deps
-6. Grep surface map — run patterns from contract-review track (15 min)
+6. Grep surface map — run patterns from contracts track (15 min)
 7. Search Solodit for findings on similar protocol types
 8. Line-by-line: first pass read everything, second pass investigate
 9. Invariant testing: `forge test --match-test invariant_` / echidna

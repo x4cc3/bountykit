@@ -1,46 +1,22 @@
 # Claude Setup
 
-Use bountykit in Claude by installing the tracks and playbooks, then using the Claude-facing guide in this repository.
+Use bountykit in Claude as a docs pack.
 
 ## Files
 
-- Claude guide: [CLAUDE.md](../../CLAUDE.md)
+- General agent guide: [AGENTS.md](../../AGENTS.md)
 - Canonical workflow: [workflow.md](../../manual/workflow.md)
 - Autonomous missions: [autonomous-operations.md](../../manual/autonomous-operations.md)
-
-## Install
-
-From the repo root:
-
-```bash
-./bootstrap.sh --client claude
-```
-
-That installs:
-
-- tracks into `~/.claude/skills`
-- playbooks into `~/.claude/commands`
-
-`bootstrap.sh` copies every directory under `tracks/` and every file under `playbooks/`; use [workflow.md](../../manual/workflow.md) to decide which command or track fits.
+- Tracks: [tracks](../../tracks)
+- Playbooks: [playbooks](../../playbooks)
 
 ## How Claude Uses It
 
-Use [CLAUDE.md](../../CLAUDE.md) as the client-facing doorway. The default pattern is:
+1. Read [AGENTS.md](../../AGENTS.md).
+2. Read [workflow.md](../../manual/workflow.md).
+3. Confirm scope with `boundary`.
+4. Choose the narrowest playbook or track.
+5. Run Disposable CLI/tools when execution is needed.
+6. Validate with [verdict](../../tracks/verdict/SKILL.md) before writing.
 
-1. read [workflow.md](../../manual/workflow.md)
-2. confirm scope with `boundary`
-3. choose the narrowest playbook or track
-4. validate with [verdict-gate](../../tracks/verdict-gate/SKILL.md) before writing
-
-For autonomous runs, use `/mission`. Generate scope JSON first with `python3 core/scope.py --csv hackerone-scope.csv` or another supported source, then feed that file into `python3 core/mission.py`.
-
-## Verification
-
-Useful checks:
-
-```bash
-ls ~/.claude/skills
-ls ~/.claude/commands
-```
-
-You should see the bountykit tracks and playbooks after installation.
+No client-specific `CLAUDE.md` or local wrapper scripts are required.

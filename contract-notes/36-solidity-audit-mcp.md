@@ -31,6 +31,8 @@ Built-in (no install):
 
 ## INSTALL & CONFIGURE
 
+Reference only: this describes an external MCP project. bountykit does not ship or configure MCP servers.
+
 ```bash
 # Prerequisites
 pip install slither-analyzer solc-select
@@ -62,7 +64,7 @@ pip install halmos      # symbolic execution
 }
 ```
 
-**Or project-level** `.mcp.json` in repo root:
+**Or project-level** `.mcp.json` in the audited target repo/workspace, not in bountykit:
 ```json
 {
   "mcpServers": {

@@ -8,7 +8,7 @@ Run the recon phase and leave behind a prioritized surface, not a wall of raw ou
 
 ## Canonical Source
 
-Treat `tracks/surface-mapping/SKILL.md` as the authoritative recon doctrine.
+Treat `../tracks/surface/SKILL.md` as the authoritative recon doctrine.
 
 Use that track for:
 
@@ -37,7 +37,7 @@ Optional focus examples:
 ## Execution Standard
 
 1. confirm the target is in scope
-2. load `tracks/surface-mapping/SKILL.md`
+2. load `../tracks/surface/SKILL.md`
 3. run the narrowest recon pass that still supports the current mission
 4. organize outputs under `recon/<target>/`
 5. rank the best next surface instead of dumping every artifact equally
@@ -53,4 +53,4 @@ Return:
 
 ## Stop Rule
 
-If the surface meets the kill signals from `tracks/surface-mapping/SKILL.md`, stop and rotate instead of deepening recon.
+If the surface meets the kill signals from `../tracks/surface/SKILL.md`, stop and rotate instead of deepening recon.

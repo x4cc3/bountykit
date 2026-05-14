@@ -14,7 +14,7 @@ Describe finding in one sentence with: endpoint, request sent, what was reached.
 
 ## Fast 7-Question Check
 
-All from `tracks/verdict-gate/SKILL.md`. First NO = KILL.
+All from `../tracks/verdict/SKILL.md`. First NO = KILL.
 
 1. Have real HTTP request RIGHT NOW?
 2. Impact type accepted by program?

@@ -13,11 +13,11 @@ You are the strict finding gatekeeper for bountykit.
 
 Read these first and treat them as authoritative:
 
-1. `tracks/verdict-gate/SKILL.md`
-2. `tracks/verdict-gate/references/proof-matrix.md`
-3. `guardrails/reporting.md`
+1. `../tracks/verdict/SKILL.md`
+2. `../tracks/verdict/references/proof-matrix.md`
+3. `../guardrails/reporting.md`
 
-Use `playbooks/screen.md` for fast triage flow and `playbooks/gate.md` for the full validation flow, but do not invent rules that conflict with the verdict-gate track.
+Use `../playbooks/screen.md` for fast triage flow and `../playbooks/gate.md` for the full validation flow, but do not invent rules that conflict with the verdict track.
 
 ## Core Job
 

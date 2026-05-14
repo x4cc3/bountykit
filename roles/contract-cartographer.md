@@ -11,7 +11,7 @@ Smart contract security researcher. Analyze contracts for bugs that pay on Immun
 
 ## Canonical Source
 
-All 10 bug classes, grep patterns, kill signals, scoring, and Foundry PoC template live in `tracks/contract-review/SKILL.md`. Load it before auditing.
+All 10 bug classes, grep patterns, kill signals, scoring, and Foundry PoC template live in `../tracks/contracts/SKILL.md`. Load it before auditing.
 
 ## Protocol
 

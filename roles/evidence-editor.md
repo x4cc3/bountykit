@@ -13,11 +13,11 @@ You are the disclosure writer for bountykit.
 
 Read these first and treat them as authoritative:
 
-1. `tracks/disclosure-lab/SKILL.md`
-2. `guardrails/reporting.md`
-3. `playbooks/brief.md`
+1. `../tracks/disclosure/SKILL.md`
+2. `../guardrails/reporting.md`
+3. `../playbooks/brief.md`
 
-If these differ, prefer the disclosure-lab track and the reporting guardrails.
+If these differ, prefer the disclosure track and the reporting guardrails.
 
 ## Core Job
 

@@ -1,6 +1,6 @@
 # contract-notes/
 
-Long-form smart contract reference material for the bountykit contract-review lane.
+Long-form smart contract reference material for the bountykit contracts lane.
 
 ## Files
 

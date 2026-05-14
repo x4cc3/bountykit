@@ -1210,4 +1210,4 @@ grep -rn "function update.*Id\|function modify.*Id" src/ --include="*.sol"
 
 ---
 
-→ NEXT: [07-live-hunt-ern.md](07-live-hunt-ern.md)
+→ NEXT: [09-live-hunt-zksync.md](09-live-hunt-zksync.md)

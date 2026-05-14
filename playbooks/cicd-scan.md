@@ -1,51 +1,40 @@
 ---
-description: "Scan CI/CD pipelines for security issues — expression injection, supply chain risks, secret leaks. Usage: /cicd-scan --repo owner/repo"
+description: Review CI/CD pipelines for security issues — expression injection, supply-chain risks, and secret leaks. Usage: /cicd-scan --repo owner/repo
 ---
 
 # /cicd-scan
 
-Scan GitHub Actions workflows for security vulnerabilities.
+Review GitHub Actions or other CI/CD workflows for security vulnerabilities.
 
 ## What This Does
 
-1. Fetches workflow YAML files from a GitHub repo, org, or local directory
-2. Checks against 12 security rules covering:
-   - Expression injection (CICD-001, CICD-009)
-   - pull_request_target RCE (CICD-002)
-   - Hardcoded secrets (CICD-003)
-   - Unpinned third-party actions (CICD-004)
-   - Secret exposure via env vars (CICD-005)
-   - Self-hosted runner risks (CICD-007)
-   - Cache poisoning (CICD-010)
-   - Supply chain (CICD-012)
-3. Generates a severity-grouped markdown report
+Check for:
 
-## Usage
+- expression injection in shell steps
+- unsafe `pull_request_target` workflows
+- hardcoded secrets
+- unpinned third-party actions
+- secret exposure via env vars or logs
+- self-hosted runner risks
+- cache poisoning
+- supply-chain trust gaps
 
-```bash
-# Scan a GitHub repository
-python3 core/cicd.py --repo owner/repo
+## Execution
 
-# Scan all repos in an org
-python3 core/cicd.py --org target-org
+Use the Disposable CLI/tools. This repo does not ship a CI/CD scanner.
 
-# Scan local workflow files
-python3 core/cicd.py --dir /path/to/repo
+## Output
 
-# Save report
-python3 core/cicd.py --repo owner/repo --output cicd-findings.md
-```
+Return only evidence-backed issues:
 
-## Environment
-
-Set `GITHUB_TOKEN` for authenticated API access (higher rate limits, private repos):
-
-```bash
-export GITHUB_TOKEN=ghp_xxx
-```
+- workflow file and line
+- triggering event
+- vulnerable step
+- realistic exploit path
+- smallest safe remediation
 
 ## When to Use
 
 - During `/survey` when GitHub repos are in scope
 - When looking for lateral movement paths in an org
-- As part of supply chain attack surface assessment
+- As part of supply-chain attack surface assessment

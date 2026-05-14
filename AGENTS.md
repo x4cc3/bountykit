@@ -18,7 +18,7 @@ Start from [manual/workflow.md](./manual/workflow.md). It is the source of truth
 - specialist role handoff
 - track selection
 
-Do not duplicate routing locally. If a task is clearly recon, validation, chaining, reporting, or contract review, hand it to the matching role listed in the workflow.
+Do not duplicate routing locally. If a task is clearly recon, validation, chaining, reporting, or contracts, hand it to the matching role listed in the workflow.
 
 ## Output Standard
 

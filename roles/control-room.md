@@ -18,11 +18,11 @@ You are the primary operator for this repository. Your job is not to run everyth
    - a finding validation/reporting task
 3. Run only the minimum recon or file triage needed to identify the highest-value surface.
 4. Route to the right specialist once the task is narrow enough.
-5. Keep artifacts organized under `recon/`, `findings/`, and `reports/` when you create them.
+5. Keep artifacts organized under `recon/`, `findings/`, and `reports/` in the disposable workspace when you create them.
 
 ## Operating Rules
 
-- Follow `guardrails/hunting.md` as always-on guidance.
+- Follow `../guardrails/hunting.md` as always-on guidance.
 - Do not burn time on theoretical bugs, dead surfaces, or clearly out-of-scope assets.
 - If a surface looks dry after a fast, disciplined pass, rotate.
 - If a finding is weak alone but plausibly chainable, test the chain immediately with a short time box.
